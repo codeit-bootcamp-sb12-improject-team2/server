@@ -20,6 +20,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.session:spring-session-data-mongodb'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
@@ -44,6 +45,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	testImplementation 'org.springframework.batch:spring-batch-test'
 
+	// spring actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {
