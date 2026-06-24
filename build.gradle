@@ -40,6 +40,10 @@ dependencies {
 	// UUID v7
 	implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.0'
 
+	// spring batch
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	testImplementation 'org.springframework.batch:spring-batch-test'
+
 }
 
 tasks.named('test') {
