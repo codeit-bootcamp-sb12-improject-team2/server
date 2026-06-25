@@ -1,0 +1,39 @@
+# Ignore Mac system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- Gradle ---
+.gradle/
+build/
+
+# --- IntelliJ Idea ---
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# --- Executables ---
+/build/
+
+# 환경 변수
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# yaml
+*.yml
+*.yaml
+
+# logs
+*.log
+logs/
+**/logs/**
