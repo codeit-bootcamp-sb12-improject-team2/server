@@ -24,8 +24,8 @@ public class ArticleDto {
     private String title;
     private Instant publishDate;
     private String summary;
-    private int viewCount = 0;
-    private int commentCount = 0;
+    private int viewCount;
+    private int commentCount;
 
     public static ArticleDto from(Article article) {
         return ArticleDto.builder()
