@@ -1,0 +1,22 @@
+package com.codeit.server.global.common;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import java.time.Instant;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.LastModifiedDate;
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@MappedSuperclass
+@Getter
+@SuperBuilder
+public abstract class BaseUpdatableEntity extends BaseEntity {
+
+  @LastModifiedDate
+  @Column(name = "updated_at", columnDefinition = "timestamp with time zone")
+  private Instant updatedAt;
+
+}
