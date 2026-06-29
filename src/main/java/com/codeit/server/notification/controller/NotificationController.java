@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,4 +36,20 @@ public class NotificationController {
     return ResponseEntity.ok(response);
   }
 
+  @PatchMapping
+  public ResponseEntity<Void> confirmAllNotifications(
+      @RequestHeader("Monew-Request-User-ID") UUID userId
+  ) {
+    notificationService.confirmAllNotifications(userId);
+    return ResponseEntity.ok().build();
+  }
+
+  @PatchMapping("/{notificationId}")
+  public ResponseEntity<Void> confirmNotification(
+      @RequestHeader UUID userId,
+      @PathVariable UUID notificationId
+  ) {
+    notificationService.confirmNotification(userId, notificationId);
+    return ResponseEntity.ok().build();
+  }
 }

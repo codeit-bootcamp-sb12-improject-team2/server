@@ -40,7 +40,7 @@ public class NotificationServiceImpl implements NotificationService {
         .nextCursor(nextCursor)
         .nextAfter(nextAfter)
         .size(content.size())
-        .totalElements(notificationRepository.countUnconfirmedByUserId(userId)) // 인라인 처리
+        .totalElements(notificationRepository.countUnconfirmedByUserId(userId))
         .hasNext(hasNext)
         .build();
   }
@@ -56,6 +56,21 @@ public class NotificationServiceImpl implements NotificationService {
         .resourceType(entity.getResourceType())
         .resourceId(entity.getResourceId())
         .build();
+  }
+
+  @Override
+  public void confirmNotification(UUID userId, UUID notificationId) {
+
+  }
+
+  @Override
+  public void confirmAllNotifications(UUID userId) {
+
+  }
+
+  @Override
+  public void deleteOldConfirmedNotifications() {
+
   }
 }
 

@@ -10,4 +10,10 @@ public interface NotificationService {
       UUID userId, UUID cursor, Instant after, int limit
   );
 
+  void confirmNotification(UUID userId, UUID notificationId);
+
+  void confirmAllNotifications(UUID userId);
+
+  void deleteOldConfirmedNotifications();
+
 }
