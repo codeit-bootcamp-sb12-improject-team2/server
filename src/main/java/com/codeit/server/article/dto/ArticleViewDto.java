@@ -1,21 +1,18 @@
 package com.codeit.server.article.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-//@Builder
+@Builder
 public class ArticleViewDto {
     private UUID id;
     private UUID userId;
-    private Instant cratedAt;
+    private Instant createdAt;
     private UUID articleId;
     private String source;
     private String sourceUrl;
