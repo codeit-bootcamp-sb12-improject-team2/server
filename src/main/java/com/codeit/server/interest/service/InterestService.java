@@ -1,6 +1,5 @@
 package com.codeit.server.interest.service;
 
-import com.codeit.server.global.exception.CustomException;
 import com.codeit.server.global.exception.ErrorCode;
 import com.codeit.server.interest.dto.InterestCreateRequest;
 import com.codeit.server.interest.dto.InterestResponse;
