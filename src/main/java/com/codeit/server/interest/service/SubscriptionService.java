@@ -1,5 +1,6 @@
 package com.codeit.server.interest.service;
 
+import com.codeit.server.global.exception.BaseException;
 import com.codeit.server.global.exception.ErrorCode;
 import com.codeit.server.interest.dto.SubscriptionResponse;
 import com.codeit.server.interest.entity.Interest;
@@ -30,13 +31,13 @@ public class SubscriptionService {
     @Transactional
     public SubscriptionResponse subscribe(UUID userId, UUID interestId) {
         if (subscriptionRepository.existsByUserIdAndInterestId(userId, interestId)) {
-            throw new CustomException(ErrorCode.ALREADY_SUBSCRIBED);
+            throw new BaseException(ErrorCode.ALREADY_SUBSCRIBED);
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ErrorCode.USER_NOT_FOUND));
         Interest interest = interestRepository.findById(interestId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INTEREST_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
 
         Subscription subscription = Subscription.builder()
                 .user(user)
@@ -54,7 +55,7 @@ public class SubscriptionService {
     public void unsubscribe(UUID userId, UUID interestId) {
         Subscription subscription = subscriptionRepository
                 .findByUserIdAndInterestId(userId, interestId)
-                .orElseThrow(() -> new CustomException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
 
         subscription.getInterest().decreaseSubscriberCount();
         subscriptionRepository.delete(subscription);

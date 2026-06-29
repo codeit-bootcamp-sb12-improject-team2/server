@@ -1,5 +1,6 @@
 package com.codeit.server.interest.service;
 
+import com.codeit.server.global.exception.BaseException;
 import com.codeit.server.global.exception.ErrorCode;
 import com.codeit.server.interest.dto.InterestCreateRequest;
 import com.codeit.server.interest.dto.InterestResponse;
@@ -28,7 +29,7 @@ public class InterestService {
     @Transactional
     public InterestResponse create(InterestCreateRequest request) {
         if (interestRepository.existsByName(request.getName())) {
-            throw new CustomException(ErrorCode.DUPLICATE_INTEREST_NAME);
+            throw new BaseException(ErrorCode.DUPLICATE_INTEREST_NAME);
         }
 
         Interest interest = Interest.builder()
@@ -53,7 +54,7 @@ public class InterestService {
     // retrieve a single interest in an ID.
     public InterestResponse findById(UUID id) {
         Interest interest = interestRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.INTEREST_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
         return InterestResponse.from(interest);
     }
 
@@ -81,7 +82,7 @@ public class InterestService {
     @Transactional
     public InterestResponse updateKeywords(UUID interestId, List<String> keywords) {
         Interest interest = interestRepository.findById(interestId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INTEREST_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
 
         interestKeywordRepository.deleteByInterestId(interestId);
 
@@ -100,7 +101,7 @@ public class InterestService {
     @Transactional
     public void delete(UUID id) {
         Interest interest = interestRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.INTEREST_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
         interestRepository.delete(interest);
     }
 }
