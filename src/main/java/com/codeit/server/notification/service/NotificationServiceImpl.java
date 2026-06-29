@@ -1,10 +1,13 @@
 package com.codeit.server.notification.service;
 
+import com.codeit.server.global.exception.BaseException;
+import com.codeit.server.global.exception.ErrorCode;
 import com.codeit.server.notification.dto.CursorPageResponseNotificationDto;
 import com.codeit.server.notification.dto.NotificationDto;
 import com.codeit.server.notification.entity.Notification;
 import com.codeit.server.notification.repository.NotificationRepository;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +48,35 @@ public class NotificationServiceImpl implements NotificationService {
         .build();
   }
 
+  @Override
+  public void confirmNotification(UUID userId, UUID notificationId) {
+
+    Notification notification = notificationRepository.findById(notificationId)
+        .orElseThrow(() -> new BaseException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+    if (!notification.getUserId().equals(userId)) {
+      throw new BaseException(ErrorCode.NOTIFICATION_ACCESS_DENIED);
+    }
+
+    notificationRepository.updateConfirmStatus(notificationId, true);
+
+  }
+
+  @Override
+  public void confirmAllNotifications(UUID userId) {
+
+    notificationRepository.updateAllConfirmStatusByUserId(userId, true);
+
+  }
+
+  @Override
+  public void deleteOldConfirmedNotifications() {
+
+    Instant oneWeekAgo = Instant.now().minus(7, ChronoUnit.DAYS);
+    notificationRepository.deleteConfirmedNotificationsOlderThan(oneWeekAgo);
+
+  }
+
   private NotificationDto convertToDto(Notification entity) {
     return NotificationDto.builder()
         .id(entity.getId())
@@ -58,19 +90,5 @@ public class NotificationServiceImpl implements NotificationService {
         .build();
   }
 
-  @Override
-  public void confirmNotification(UUID userId, UUID notificationId) {
-
-  }
-
-  @Override
-  public void confirmAllNotifications(UUID userId) {
-
-  }
-
-  @Override
-  public void deleteOldConfirmedNotifications() {
-
-  }
 }
 

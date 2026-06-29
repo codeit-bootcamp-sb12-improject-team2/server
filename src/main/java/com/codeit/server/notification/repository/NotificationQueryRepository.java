@@ -12,4 +12,10 @@ public interface NotificationQueryRepository {
 
   long countUnconfirmedByUserId(UUID userId);
 
+  void updateConfirmStatus(UUID notificationId, boolean confirmed);
+
+  void updateAllConfirmStatusByUserId(UUID userId, boolean confirmed);
+
+  void deleteConfirmedNotificationsOlderThan(Instant thresholdDate);
+
 }

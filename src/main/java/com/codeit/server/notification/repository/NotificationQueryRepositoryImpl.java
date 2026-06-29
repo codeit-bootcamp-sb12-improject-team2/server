@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 @RequiredArgsConstructor
 public class NotificationQueryRepositoryImpl implements NotificationQueryRepository {
@@ -47,5 +48,28 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
             .and("confirmed").is(false)
     );
     return mongoTemplate.count(query, Notification.class);
+  }
+
+  @Override
+  public void updateConfirmStatus(UUID notificationId, boolean confirmed) {
+    Query query = new Query(Criteria.where("_id").is(notificationId));
+    Update update = new Update().set("confirmed", confirmed).set("updatedAt", Instant.now());
+    mongoTemplate.updateFirst(query, update, Notification.class);
+  }
+
+  @Override
+  public void updateAllConfirmStatusByUserId(UUID userId, boolean confirmed) {
+    Query query = new Query(Criteria.where("user_id").is(userId).and("confirmed").is(!confirmed));
+    Update update = new Update().set("confirmed", confirmed).set("updatedAt", Instant.now());
+    mongoTemplate.updateMulti(query, update, Notification.class);
+  }
+
+  @Override
+  public void deleteConfirmedNotificationsOlderThan(Instant thresholdDate) {
+    Query query = new Query(
+        Criteria.where("confirmed").is(true)
+            .and("updatedAt").lt(thresholdDate)
+    );
+    mongoTemplate.remove(query, Notification.class);
   }
 }
