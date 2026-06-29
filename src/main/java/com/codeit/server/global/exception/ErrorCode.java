@@ -32,10 +32,13 @@ public enum ErrorCode {
   // 4. Interest 도메인 (관심사 / 구독 관리)
 
   INTEREST_NOT_FOUND("존재하지 않는 관심사 카테고리입니다."),
-  INTEREST_ALREADY_EXISTS("이미 존재하는 관심사 이름입니다."),
+  DUPLICATE_INTEREST_NAME("이미 존재하는 관심사 이름입니다."),
   ALREADY_SUBSCRIBED("이미 구독 중인 관심사입니다."),
   SUBSCRIPTION_NOT_FOUND("구독 내역을 찾을 수 없습니다."),
 
+  // 4-1. Interest Keyword 도메인 ( 관심사 키워드 관리)
+
+  DUPLICATE_KEYWORD( "이미 등록된 키워드입니다."),
 
   // 5. Comment 도메인 (댓글 / 좋아요 관리)
 
