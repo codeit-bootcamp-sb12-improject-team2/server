@@ -29,7 +29,7 @@ public class InterestService {
     @Transactional
     public InterestResponse create(InterestCreateRequest request) {
         if (interestRepository.existsByName(request.getName())) {
-            throw new BaseException(ErrorCode.DUPLICATE_INTEREST_NAME);
+            throw new BaseException(ErrorCode.INTEREST_ALREADY_EXISTS);
         }
 
         Interest interest = Interest.builder()
