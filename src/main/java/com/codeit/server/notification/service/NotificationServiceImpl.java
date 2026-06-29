@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class NotificationServiceImpl implements NotificationService {
 
   @Override
-  public CursorPageResponseNotificationDto getUnconfirmedNotifications(UUID userId, String cursor,
+  public CursorPageResponseNotificationDto getUnconfirmedNotifications(UUID userId, UUID cursor,
       Instant after, int limit) {
     return null;
   }
