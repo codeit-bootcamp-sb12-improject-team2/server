@@ -34,7 +34,6 @@ public class GlobalExceptionHandler {
 
     HttpStatus status = parseHttpStatus(e.getErrorCode());
 
-    // 🛠️ 버그 수정: 컴파일러가 Exception 생성자와 혼동하지 않도록 명시적으로 매핑 매개변수 선언
     ErrorResponse response = new ErrorResponse(
         Instant.now(),
         e.getErrorCode().name(),
