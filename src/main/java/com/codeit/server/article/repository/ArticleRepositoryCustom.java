@@ -11,6 +11,6 @@ import java.util.UUID;
 
 public interface ArticleRepositoryCustom {
     Optional<ArticleDto> findArticle(UUID articleId, UUID requestUserId);
-    CursorPageResponseArticle searchArticles(UUID cursor, Instant after, int size, ArticleSearchRequest request);
+    CursorPageResponseArticle searchArticles(String cursor, String after, int size, UUID requestUserId, ArticleSearchRequest request);
     List<String> findSource();
 }
