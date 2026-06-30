@@ -38,6 +38,9 @@ public enum ErrorCode {
   ALREADY_SUBSCRIBED("이미 구독 중인 관심사입니다."),
   SUBSCRIPTION_NOT_FOUND("구독 내역을 찾을 수 없습니다."),
 
+  // 4-1. Interest Keyword 도메인 ( 관심사 키워드 관리)
+
+  DUPLICATE_KEYWORD( "이미 등록된 키워드입니다."),
 
   // 5. Comment 도메인 (댓글 / 좋아요 관리)
 
