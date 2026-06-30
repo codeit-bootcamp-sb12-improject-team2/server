@@ -28,8 +28,8 @@ public class InterestResponse {
                 .keywords(interest.getKeywords().stream()
                         .map(InterestKeyword::getKeyword)
                         .toList())
-                .createdAt(interest.getCreatedAt())
-                .updatedAt(interest.getUpdatedAt())
+                .createdAt(LocalDateTime.from(interest.getCreatedAt()))
+                .updatedAt(LocalDateTime.from(interest.getUpdatedAt()))
                 .build();
     }
 }

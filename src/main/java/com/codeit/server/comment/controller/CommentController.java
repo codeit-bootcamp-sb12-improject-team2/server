@@ -4,19 +4,24 @@ import com.codeit.server.comment.dto.CommentCreateRequest;
 import com.codeit.server.comment.dto.CommentDto;
 import com.codeit.server.comment.dto.CommentLikeDto;
 import com.codeit.server.comment.dto.CommentUpdateRequest;
+import com.codeit.server.comment.dto.CursorPageResponseCommentDto;
 import com.codeit.server.comment.service.CommentService;
 import jakarta.validation.Valid;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -26,8 +31,25 @@ public class CommentController {
 
   private final CommentService commentService;
 
+  @GetMapping
+  public ResponseEntity<CursorPageResponseCommentDto> getComments(
+      @RequestParam UUID articleId,
+      @RequestHeader("Monew-Request-User-ID") UUID userId,
+      @RequestParam(value = "orderBy", defaultValue = "createdAt") String orderBy,
+      @RequestParam(value = "direction", defaultValue = "ASC") Sort.Direction direction,
+      @RequestParam(value = "cursor", required = false) String cursor,
+      @RequestParam(value = "after", required = false) Instant after,
+      @RequestParam(value = "limit", defaultValue = "20") int limit
+  ) {
+    return ResponseEntity.ok(
+        commentService.getComments(articleId, userId, orderBy, direction, cursor, after, limit)
+    );
+  }
+
   @PostMapping
-  public ResponseEntity<CommentDto> create(@Valid @RequestBody CommentCreateRequest request) {
+  public ResponseEntity<CommentDto> create(
+      @Valid @RequestBody CommentCreateRequest request
+  ) {
     CommentDto comment = commentService.create(
         request.getArticleId(),
         request.getUserId(),

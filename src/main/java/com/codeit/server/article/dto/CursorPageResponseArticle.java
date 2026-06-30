@@ -11,8 +11,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CursorPageResponseArticle {
     private List<ArticleDto> content;
-    private UUID nextCursor;
-    private Instant nextAfter;
+    private String nextCursor;
+    private String nextAfter;
     private int size;
     private long totalElements;
     private boolean hasNext;

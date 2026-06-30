@@ -10,4 +10,6 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, UUID> 
   boolean existsByUserIdAndCommentId(UUID userId, UUID commentId);
 
   Optional<CommentLike> findByUserIdAndCommentId(UUID userId, UUID commentId);
+
+  void deleteByCommentId(UUID commentId);
 }

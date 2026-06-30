@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface InterestRepository extends JpaRepository<Interest, UUID> {
+public interface InterestRepository extends JpaRepository<Interest, UUID>, InterestRepositoryCustom {
 
     // duplicate name check
     boolean existsByName(String name);

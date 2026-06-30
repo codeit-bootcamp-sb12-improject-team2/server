@@ -23,7 +23,7 @@ public class SubscriptionResponse {
                 .userId(subscription.getUser().getId())
                 .interestId(subscription.getInterest().getId())
                 .interestName(subscription.getInterest().getName())
-                .createdAt(subscription.getCreatedAt())
+                .createdAt(LocalDateTime.from(subscription.getCreatedAt()))
                 .build();
     }
 }

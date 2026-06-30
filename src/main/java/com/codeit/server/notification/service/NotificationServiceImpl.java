@@ -6,6 +6,7 @@ import com.codeit.server.notification.dto.CursorPageResponseNotificationDto;
 import com.codeit.server.notification.dto.NotificationDto;
 import com.codeit.server.notification.entity.Notification;
 import com.codeit.server.notification.repository.NotificationRepository;
+import com.github.f4b6a3.uuid.UuidCreator;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -20,11 +21,14 @@ public class NotificationServiceImpl implements NotificationService {
   private final NotificationRepository notificationRepository;
 
   @Override
-  public CursorPageResponseNotificationDto getUnconfirmedNotifications(UUID userId, UUID cursor,
-      Instant after, int limit) {
+  public CursorPageResponseNotificationDto getUnconfirmedNotifications(UUID userId, String cursor,
+      String after, int limit) {
+
+    Instant afterInstant = (after != null && !after.isBlank()) ? Instant.parse(after) : null;
+
 
     List<Notification> entities =
-        notificationRepository.findUnconfirmedNotificationsByCursor(userId, cursor, after, limit);
+        notificationRepository.findUnconfirmedNotificationsByCursor(userId, cursor, afterInstant, limit);
 
     boolean hasNext = entities.size() > limit;
     List<Notification> resultPage = hasNext ? entities.subList(0, limit) : entities;
@@ -35,13 +39,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     Notification lastItem =
         (!resultPage.isEmpty() && hasNext) ? resultPage.get(resultPage.size() - 1) : null;
-    UUID nextCursor = (lastItem != null) ? lastItem.getId() : null;
-    Instant nextAfter = (lastItem != null) ? lastItem.getCreatedAt() : null;
+
+    String nextCursorStr = (lastItem != null) ? lastItem.getId().toString() : null;
+    String nextAfterStr = (lastItem != null) ? lastItem.getCreatedAt().toString() : null;
 
     return CursorPageResponseNotificationDto.builder()
         .content(content)
-        .nextCursor(nextCursor)
-        .nextAfter(nextAfter)
+        .nextCursor(nextCursorStr)
+        .nextAfter(nextAfterStr)
         .size(content.size())
         .totalElements(notificationRepository.countUnconfirmedByUserId(userId))
         .hasNext(hasNext)
@@ -75,6 +80,19 @@ public class NotificationServiceImpl implements NotificationService {
     Instant oneWeekAgo = Instant.now().minus(7, ChronoUnit.DAYS);
     notificationRepository.deleteConfirmedNotificationsOlderThan(oneWeekAgo);
 
+  }
+
+  @Override
+  public void createNotification(UUID userId, String content, String resourceType, UUID resourceId) {
+    Notification notification = Notification.builder()
+        .id(UuidCreator.getTimeOrderedEpoch())
+        .userId(userId)
+        .content(content)
+        .resourceType(resourceType)
+        .resourceId(resourceId)
+        .confirmed(false)
+        .build();
+    notificationRepository.save(notification);
   }
 
   private NotificationDto convertToDto(Notification entity) {
