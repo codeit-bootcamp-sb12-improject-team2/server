@@ -16,4 +16,7 @@ public interface NotificationService {
 
   void deleteOldConfirmedNotifications();
 
+  void createNotification(UUID userId, String content, String resourceType, UUID resourceId);
+
+
 }

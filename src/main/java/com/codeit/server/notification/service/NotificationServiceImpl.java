@@ -6,6 +6,7 @@ import com.codeit.server.notification.dto.CursorPageResponseNotificationDto;
 import com.codeit.server.notification.dto.NotificationDto;
 import com.codeit.server.notification.entity.Notification;
 import com.codeit.server.notification.repository.NotificationRepository;
+import com.github.f4b6a3.uuid.UuidCreator;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -79,6 +80,19 @@ public class NotificationServiceImpl implements NotificationService {
     Instant oneWeekAgo = Instant.now().minus(7, ChronoUnit.DAYS);
     notificationRepository.deleteConfirmedNotificationsOlderThan(oneWeekAgo);
 
+  }
+
+  @Override
+  public void createNotification(UUID userId, String content, String resourceType, UUID resourceId) {
+    Notification notification = Notification.builder()
+        .id(UuidCreator.getTimeOrderedEpoch())
+        .userId(userId)
+        .content(content)
+        .resourceType(resourceType)
+        .resourceId(resourceId)
+        .confirmed(false)
+        .build();
+    notificationRepository.save(notification);
   }
 
   private NotificationDto convertToDto(Notification entity) {
