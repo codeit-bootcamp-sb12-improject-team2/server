@@ -1,5 +1,6 @@
 package com.codeit.server.article.entity;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 public class ArticleInterest {
     @Id
-    @Column(updatable = false, nullable = false)
+    @Column(name = "id", columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
 
     @Column(nullable = false)
@@ -24,4 +25,11 @@ public class ArticleInterest {
 
     @Column(nullable = false)
     private UUID interestId;
+
+    @PrePersist
+    void init() {
+        if (this.id == null) {
+            this.id = UuidCreator.getTimeOrderedEpoch();
+        }
+    }
 }

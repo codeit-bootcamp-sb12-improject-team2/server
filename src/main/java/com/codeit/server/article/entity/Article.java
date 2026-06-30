@@ -1,5 +1,6 @@
 package com.codeit.server.article.entity;
 
+import com.codeit.server.global.common.BaseUpdatableEntity;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -19,10 +20,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "articles")
 @EntityListeners(AuditingEntityListener.class)
-public class Article {
-    @Id
-    @Column(updatable = false, nullable = false)
-    private UUID id;
+public class Article extends BaseUpdatableEntity {
 
     @Column(nullable = false, length = 30)
     private String source;
@@ -49,23 +47,11 @@ public class Article {
     @Column(nullable = false)
     private int commentCount = 0;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @LastModifiedDate
-    private Instant updatedAt;
 
     @Builder.Default
     @Column(nullable = false)
     private boolean isDeleted = false;
 
-    @PrePersist
-    public void generateId() {
-        if (this.id == null) {
-            this.id = UuidCreator.getTimeOrderedEpoch();
-        }
-    }
 
     public void increaseViewCount() {
         this.viewCount++;
@@ -73,6 +59,10 @@ public class Article {
 
     public void increaseCommentCount() {
         this.commentCount++;
+    }
+
+    public void decreaseCommentCount() {
+        this.commentCount--;
     }
 
     public void delete() {

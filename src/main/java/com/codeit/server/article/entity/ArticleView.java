@@ -1,5 +1,6 @@
 package com.codeit.server.article.entity;
 
+import com.codeit.server.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,10 +16,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "article_views")
 @EntityListeners(AuditingEntityListener.class)
-public class ArticleView {
-    @Id
-    @Column(updatable = false, nullable = false)
-    private UUID id;
+public class ArticleView extends BaseEntity {
 
     @Column(nullable = false)
     private UUID articleId;
