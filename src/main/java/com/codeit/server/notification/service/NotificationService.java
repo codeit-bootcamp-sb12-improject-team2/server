@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface NotificationService {
 
   CursorPageResponseNotificationDto getUnconfirmedNotifications(
-      UUID userId, UUID cursor, Instant after, int limit
+      UUID userId, String cursor, String after, int limit
   );
 
   void confirmNotification(UUID userId, UUID notificationId);
