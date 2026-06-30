@@ -4,6 +4,7 @@ import com.codeit.server.article.entity.Article;
 import com.codeit.server.article.repository.ArticleRepository;
 import com.codeit.server.comment.dto.CommentDto;
 import com.codeit.server.comment.dto.CommentLikeDto;
+import com.codeit.server.comment.dto.CursorPageResponseCommentDto;
 import com.codeit.server.comment.entity.Comment;
 import com.codeit.server.comment.entity.CommentLike;
 import com.codeit.server.comment.repository.CommentLikeRepository;
@@ -12,8 +13,10 @@ import com.codeit.server.global.exception.BaseException;
 import com.codeit.server.global.exception.ErrorCode;
 import com.codeit.server.user.entity.User;
 import com.codeit.server.user.repository.UserRepository;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,12 +61,21 @@ public class CommentService {
     Comment comment = getComment(commentId);
     validateNotDeleted(comment);
 
+    Article article = getArticle(comment.getArticleId());
+    article.decreaseCommentCount();
+
     comment.delete();
   }
 
   public void hardDelete(UUID commentId) {
     Comment comment = getComment(commentId);
+    Article article = getArticle(comment.getArticleId());
 
+    if(!comment.isDeleted()){
+      article.decreaseCommentCount();
+    }
+
+    commentLikeRepository.deleteByCommentId(commentId);
     commentRepository.delete(comment);
   }
 
@@ -98,6 +110,31 @@ public class CommentService {
     comment.decreaseLikeCount();
     commentLikeRepository.delete(commentLike);
   }
+
+  @Transactional(readOnly = true)
+  public CursorPageResponseCommentDto getComments(
+      UUID articleId,
+      UUID requestUserId,
+      String orderBy,
+      Sort.Direction direction,
+      String cursor,
+      Instant after,
+      int limit
+  ) {
+    getArticle(articleId);
+    getUser(requestUserId);
+
+    return commentRepository.findAllByArticle(
+        articleId,
+        requestUserId,
+        orderBy,
+        direction,
+        cursor,
+        after,
+        limit
+    );
+  }
+
 
   @Transactional(readOnly = true)
   public Comment get(UUID commentId) {
