@@ -155,7 +155,6 @@ public class InterestService {
 
 
     // Unsubscribe from an interest
-    // ✅ Unsubscribe from an interest
     @Transactional
     public void unsubscribe(UUID interestId, UUID userId) {
         Interest interest = interestRepository.findById(interestId)
