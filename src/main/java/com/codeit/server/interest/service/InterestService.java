@@ -2,8 +2,10 @@ package com.codeit.server.interest.service;
 
 import com.codeit.server.global.exception.BaseException;
 import com.codeit.server.global.exception.ErrorCode;
+import com.codeit.server.interest.dto.CursorPageResponse;
 import com.codeit.server.interest.dto.InterestCreateRequest;
 import com.codeit.server.interest.dto.InterestResponse;
+import com.codeit.server.interest.dto.InterestUpdateRequest;
 import com.codeit.server.interest.entity.Interest;
 import com.codeit.server.interest.entity.InterestKeyword;
 import com.codeit.server.interest.repository.InterestKeywordRepository;
@@ -27,7 +29,7 @@ public class InterestService {
 
     // Create a new interest along with its keywords
     @Transactional
-    public InterestResponse create(InterestCreateRequest request) {
+    public InterestResponse create(InterestCreateRequest request, UUID userId) {
         if (interestRepository.existsByName(request.getName())) {
             throw new BaseException(ErrorCode.INTEREST_ALREADY_EXISTS);
         }
@@ -51,31 +53,74 @@ public class InterestService {
         return InterestResponse.from(interest);
     }
 
-    // retrieve a single interest in an ID.
+    // Retrieve a single interest in ID
     public InterestResponse findById(UUID id) {
         Interest interest = interestRepository.findById(id)
                 .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
         return InterestResponse.from(interest);
     }
 
-    // Search interests by name keyword (paged)
-    public Page<InterestResponse> search(String keyword, Pageable pageable) {
-        Page<Interest> interests = (keyword == null || keyword.isBlank())
-                ? interestRepository.findAll(pageable)
-                : interestRepository.findByNameContainingIgnoreCase(keyword, pageable);
-        return interests.map(InterestResponse::from);
+    // Search interests by keyword with cursor-based pagination
+    public CursorPageResponse<InterestResponse> search(
+            String keyword,
+            String orderBy,
+            String cursor,
+            String nextAfter,
+            int size,
+            UUID userId
+    ) {
+        List<Interest> interests = interestRepository.searchWithCursor(
+                keyword, orderBy, cursor, nextAfter, size + 1, userId
+        );
+
+        boolean hasNext = interests.size() > size;
+        if (hasNext) interests = interests.subList(0, size);
+
+        String nextCursor = null;
+        String newNextAfter = null;
+
+        if (hasNext) {
+            Interest last = interests.get(interests.size() - 1);
+            nextCursor = resolveNextCursor(last, orderBy);
+            newNextAfter = last.getId().toString();
+        }
+
+        long totalElements = interestRepository.countByKeyword(keyword);
+
+        return CursorPageResponse.of(
+                interests.stream().map(InterestResponse::from).toList(),
+                nextCursor,
+                newNextAfter,
+                size,
+                totalElements
+        );
     }
 
-    // Get most popular interests ordered by subscriber count
-    public Page<InterestResponse> findPopularInterests(Pageable pageable) {
-        return interestRepository.findAllOrderBySubscriberCountDesc(pageable)
-                .map(InterestResponse::from);
+    // Get popular interests ordered by subscriber count with cursor-based pagination
+    public CursorPageResponse<InterestResponse> findPopularInterests(
+            String cursor,
+            String nextAfter,
+            int size,
+            UUID userId
+    ) {
+        return search(null, "SUBSCRIBER", cursor, nextAfter, size, userId);
     }
 
     // Get interests subscribed to by a specific user (dashboard / my page)
     public Page<InterestResponse> findSubscribedInterests(UUID userId, Pageable pageable) {
         return interestRepository.findSubscribedInterestsByUserId(userId, pageable)
                 .map(InterestResponse::from);
+    }
+
+    // Update interest name and keywords
+    @Transactional
+    public InterestResponse update(UUID interestId, InterestUpdateRequest request, UUID userId) {
+        Interest interest = interestRepository.findById(interestId)
+                .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
+
+        interest.rename(request.getName());  // updateName() → rename()
+
+        return InterestResponse.from(interest);
     }
 
     // Update interest keywords (replace all)
@@ -97,11 +142,41 @@ public class InterestService {
         return InterestResponse.from(interest);
     }
 
-    // Delete an interest
+    // Subscribe to an interest
     @Transactional
-    public void delete(UUID id) {
-        Interest interest = interestRepository.findById(id)
+    public InterestResponse subscribe(UUID interestId, UUID userId) {
+        Interest interest = interestRepository.findById(interestId)
+                .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
+
+        interest.increaseSubscriberCount();  // incrementSubscriberCount() → increaseSubscriberCount()
+
+        return InterestResponse.from(interest);
+    }
+
+
+    // Unsubscribe from an interest
+    @Transactional
+    public void unsubscribe(UUID interestId, UUID userId) {
+        Interest interest = interestRepository.findById(interestId)
+                .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
+
+        interest.decreaseSubscriberCount();  // decrementSubscriberCount() → decreaseSubscriberCount()
+    }
+
+    // Hard delete an interest
+    @Transactional
+    public void hardDelete(UUID interestId, UUID userId) {
+        Interest interest = interestRepository.findById(interestId)
                 .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
         interestRepository.delete(interest);
+    }
+
+    // Resolve nextCursor value based on orderBy
+    private String resolveNextCursor(Interest interest, String orderBy) {
+        if (orderBy == null) return interest.getName();
+        return switch (orderBy.toUpperCase()) {
+            case "SUBSCRIBER" -> String.valueOf(interest.getSubscriberCount());
+            default -> interest.getName();  // NAME or default
+        };
     }
 }
