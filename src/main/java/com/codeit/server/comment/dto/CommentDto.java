@@ -3,10 +3,12 @@ package com.codeit.server.comment.dto;
 import com.codeit.server.comment.entity.Comment;
 import java.time.Instant;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 @Builder
 public class CommentDto {
 
