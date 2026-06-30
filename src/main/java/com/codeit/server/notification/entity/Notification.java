@@ -2,7 +2,7 @@ package com.codeit.server.notification.entity;
 
 
 import com.codeit.server.global.common.BaseUpdatableEntity;
-import jakarta.persistence.Id;
+import com.codeit.server.global.common.MongoBaseUpdatableEntity;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,12 +11,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.annotation.Id;
 
-@Document(collation = "notifications")
+@Document(collection = "notifications")
 @Getter
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notification extends BaseUpdatableEntity {
+public class Notification extends MongoBaseUpdatableEntity {
 
   @Id
   private UUID id;
