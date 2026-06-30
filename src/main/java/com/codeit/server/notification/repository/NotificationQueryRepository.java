@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface NotificationQueryRepository {
 
   List<Notification> findUnconfirmedNotificationsByCursor(
-      UUID userId, UUID cursorId, Instant afterInstant, int limit);
+      UUID userId, String cursorId, Instant afterInstant, int limit);
 
   long countUnconfirmedByUserId(UUID userId);
 

@@ -12,8 +12,8 @@ import lombok.Getter;
 public class CursorPageResponseNotificationDto {
 
   private final List<NotificationDto> content;
-  private final UUID nextCursor;
-  private final Instant nextAfter;
+  private final String nextCursor;
+  private final String nextAfter;
   private final int size;
   private final long totalElements;
   private final boolean hasNext;

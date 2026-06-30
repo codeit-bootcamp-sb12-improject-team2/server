@@ -16,25 +16,38 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
 
   private final MongoTemplate mongoTemplate;
 
+
+  @Override
   public List<Notification> findUnconfirmedNotificationsByCursor(
-      UUID userId, UUID cursorId, Instant afterInstant, int limit) {
+      UUID userId, String cursorId, Instant afterInstant, int limit) {
+
+
 
     Query query = new Query();
 
     Criteria baseCriteria = Criteria.where("user_id").is(userId)
         .and("confirmed").is(false);
 
-    if (afterInstant != null && cursorId != null) {
-      Criteria cursorCriteria = new Criteria().orOperator(
-          Criteria.where("createdAt").lt(afterInstant),
-          Criteria.where("createdAt").is(afterInstant).and("_id").lt(cursorId)
-      );
+    if (cursorId != null && !cursorId.isBlank()) {
+      try {
+        UUID targetUuid = UUID.fromString(cursorId);
 
-      baseCriteria.andOperator(cursorCriteria);
+        if (afterInstant != null) {
+          Criteria cursorCriteria = new Criteria().orOperator(
+              Criteria.where("createdAt").lt(afterInstant),
+              Criteria.where("createdAt").is(afterInstant).and("_id").lt(targetUuid)
+          );
+          baseCriteria.andOperator(cursorCriteria);
+        } else {
+
+          baseCriteria.and("_id").lt(targetUuid);
+        }
+      } catch (IllegalArgumentException e) {
+       //
+      }
     }
 
     query.addCriteria(baseCriteria);
-
     query.with(Sort.by(Sort.Direction.DESC, "createdAt", "_id"));
     query.limit(limit + 1);
 
@@ -70,6 +83,10 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
         Criteria.where("confirmed").is(true)
             .and("updatedAt").lt(thresholdDate)
     );
+    remove(query); // 몽고디비 remove 실행
+  }
+
+  private void remove(Query query) {
     mongoTemplate.remove(query, Notification.class);
   }
 }
