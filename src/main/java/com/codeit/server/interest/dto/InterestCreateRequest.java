@@ -10,8 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 public class InterestCreateRequest {
 
-    @NotBlank
+    @NotBlank(message = "interest name is required")
     private String name;
 
-    private List<String> keywords; // optional
+    private List<String> keywords;
 }
