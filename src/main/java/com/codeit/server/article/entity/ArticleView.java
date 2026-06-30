@@ -21,10 +21,10 @@ public class ArticleView {
     private UUID id;
 
     @Column(nullable = false)
-    private UUID ArticleId;
+    private UUID articleId;
 
     @Column(nullable = false)
-    private UUID UserId;
+    private UUID userId;
 
     @Column(nullable = false)
     private Instant createdAt;
