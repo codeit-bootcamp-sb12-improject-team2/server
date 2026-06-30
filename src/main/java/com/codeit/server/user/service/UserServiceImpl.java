@@ -56,6 +56,7 @@ public class UserServiceImpl implements UserService {
       throw new BaseException(ErrorCode.INVALID_CREDENTIALS);
     }
 
+    log.info("로그인 성공: userId={}", user.getId());
     return UserDto.from(user);
   }
 
