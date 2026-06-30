@@ -1,5 +1,7 @@
 package com.codeit.server.article.dto;
 
+import com.codeit.server.article.entity.Article;
+import com.codeit.server.article.entity.ArticleView;
 import lombok.*;
 
 import java.time.Instant;
@@ -21,6 +23,22 @@ public class ArticleViewDto {
     private String articleSummary;
     private int articleCommentCount;
     private int articleViewCount;
+
+    public static ArticleViewDto from(Article article, ArticleView articleView) {
+        return new ArticleViewDto(
+                articleView.getId(),
+                articleView.getUserId(),
+                articleView.getCreatedAt(),
+                article.getId(),
+                article.getSource(),
+                article.getSourceUrl(),
+                article.getTitle(),
+                article.getPublishDate(),
+                article.getSummary(),
+                article.getCommentCount(),
+                article.getViewCount()
+        );
+    }
 
 }
 
