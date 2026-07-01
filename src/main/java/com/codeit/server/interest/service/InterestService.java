@@ -53,13 +53,6 @@ public class InterestService {
         return InterestResponse.from(interest);
     }
 
-    // Retrieve a single interest in ID
-    public InterestResponse findById(UUID id) {
-        Interest interest = interestRepository.findById(id)
-                .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
-        return InterestResponse.from(interest);
-    }
-
     // Search interests by keyword with cursor-based pagination
     public CursorPageResponse<InterestResponse> search(
             String keyword,
@@ -95,18 +88,8 @@ public class InterestService {
                 totalElements
         );
     }
-
-    // Get popular interests ordered by subscriber count with cursor-based pagination
-    public CursorPageResponse<InterestResponse> findPopularInterests(
-            String cursor,
-            String nextAfter,
-            int size,
-            UUID userId
-    ) {
-        return search(null, "SUBSCRIBER", cursor, nextAfter, size, userId);
-    }
-
-    // Get interests subscribed to by a specific user (dashboard / my page)
+    
+        // Get interests subscribed to by a specific user (dashboard / my page)
     public Page<InterestResponse> findSubscribedInterests(UUID userId, Pageable pageable) {
         return interestRepository.findSubscribedInterestsByUserId(userId, pageable)
                 .map(InterestResponse::from);
@@ -119,25 +102,6 @@ public class InterestService {
                 .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
 
         interest.rename(request.getName());  // updateName() → rename()
-
-        return InterestResponse.from(interest);
-    }
-
-    // Update interest keywords (replace all)
-    @Transactional
-    public InterestResponse updateKeywords(UUID interestId, List<String> keywords) {
-        Interest interest = interestRepository.findById(interestId)
-                .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
-
-        interestKeywordRepository.deleteByInterestId(interestId);
-
-        for (String keyword : keywords) {
-            InterestKeyword interestKeyword = InterestKeyword.builder()
-                    .interest(interest)
-                    .keyword(keyword)
-                    .build();
-            interestKeywordRepository.save(interestKeyword);
-        }
 
         return InterestResponse.from(interest);
     }

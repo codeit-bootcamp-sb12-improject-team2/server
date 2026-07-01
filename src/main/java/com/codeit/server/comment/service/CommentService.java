@@ -16,6 +16,8 @@ import com.codeit.server.user.repository.UserRepository;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import com.codeit.server.notification.event.NotificationEvent;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +32,7 @@ public class CommentService {
   private final UserRepository userRepository;
   private final ArticleRepository articleRepository;
   private final CommentModerationService commentModerationService;
-
+  private final ApplicationEventPublisher eventPublisher;
 
   public CommentDto create(UUID articleId, UUID userId, String content) {
     commentModerationService.validate(content);
@@ -87,7 +89,7 @@ public class CommentService {
   public CommentLikeDto like(UUID commentId, UUID userId) {
     Comment comment = getComment(commentId);
     validateNotDeleted(comment);
-    getUser(userId);
+    User liker = getUser(userId);
 
     if (commentLikeRepository.existsByUserIdAndCommentId(userId, commentId)) {
       throw new BaseException(ErrorCode.ALREADY_LIKED_COMMENT);
@@ -100,6 +102,16 @@ public class CommentService {
 
     comment.increaseLikeCount();
     CommentLike savedCommentLike = commentLikeRepository.save(commentLike);
+
+    if (!comment.getUserId().equals(userId)) {
+      eventPublisher.publishEvent(new NotificationEvent(
+          comment.getUserId(),
+          liker.getNickname() + "님이 나의 댓글을 좋아합니다.",
+          "comment",
+          comment.getId()
+      ));
+    }
+
     User commentUser = getUser(comment.getUserId());
     return CommentLikeDto.from(savedCommentLike, comment, commentUser.getNickname());
   }

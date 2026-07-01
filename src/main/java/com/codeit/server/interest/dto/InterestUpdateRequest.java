@@ -4,14 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
-public class InterestCreateRequest {
+public class InterestUpdateRequest {
 
-    @NotBlank(message = "interest name is required")
+    @NotBlank(message = "Revised name is required.")
     private String name;
-
-    private List<String> keywords;
 }
