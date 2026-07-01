@@ -63,7 +63,9 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserDto update(UUID userId, UUID requestUserId, UserUpdateRequest request) {
-    validateUserAccess(userId, requestUserId);
+    UUID validatedId = (requestUserId != null) ? requestUserId : userId;
+
+    validateUserAccess(userId, validatedId);
 
     User user = findActiveUser(userId);
 
@@ -102,18 +104,6 @@ public class UserServiceImpl implements UserService {
     userRepository.delete(user);
 
     log.info("사용자 물리 삭제 완료: userId={}", userId);
-  }
-
-  @Override
-  @Transactional
-  public void purgeExpiredSoftDeletedUsers() {
-    Instant threshold = Instant.now().minus(1, ChronoUnit.DAYS);
-
-    List<User> expiredUsers = userRepository.findAllSoftDeletedBefore(threshold);
-
-    userRepository.deleteAll(expiredUsers);
-
-    log.info("사용자 물리 삭제 완료: {}명", expiredUsers.size());
   }
 
   private User findActiveUser(UUID userId) {

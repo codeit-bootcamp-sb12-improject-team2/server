@@ -19,7 +19,11 @@ public class BatchScheduler {
 
     private final JobLauncher jobLauncher;
 
+    @Qualifier("deleteOldNotificationsJob")
     private final Job deleteOldNotificationsJob;
+
+    @Qualifier("userDeleteJob")
+    private final Job userDeleteJob;
 
 
     @Scheduled(cron = "${spring.batch.scheduler.cron.delete-old-notifications:0 0 0 * * ?}")
@@ -34,6 +38,22 @@ public class BatchScheduler {
             log.info("Scheduled deleteOldNotificationsJob completed successfully.");
         } catch (Exception e) {
             log.error("Failed to execute scheduled deleteOldNotificationsJob", e);
+        }
+    }
+
+    @Scheduled(cron = "${spring.batch.scheduler.cron.delete-expired-users:0 0 1 * * *}")
+    public void runUserDeleteJob() {
+        log.info("Scheduled task triggered: runUserDeleteJob");
+
+        try {
+            JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+
+            jobLauncher.run(userDeleteJob, jobParameters);
+            log.info("Scheduled userDeleteJob completed successfully.");
+        } catch (Exception e) {
+            log.error("Failed to execute scheduled userDeleteJob", e);
         }
     }
 }
