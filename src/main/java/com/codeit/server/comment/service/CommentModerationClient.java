@@ -56,7 +56,7 @@ public class CommentModerationClient {
           String.class
       ).getBody();
 
-      log.info("OpenAI moderation raw response: {}", responseBody);
+      log.debug("OpenAI moderation raw response: {}", responseBody);
 
       if (!StringUtils.hasText(responseBody)) {
         throw new BaseException(ErrorCode.COMMENT_MODERATION_FAILED);

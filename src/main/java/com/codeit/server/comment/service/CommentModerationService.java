@@ -45,12 +45,12 @@ public class CommentModerationService {
     }
 
     if (isLocallyBlocked(content)) {
-      log.info("Comment blocked by local blocked-words rule: {}", content);
+      log.info("Comment blocked by local blocked-words rule");
       throw new BaseException(ErrorCode.COMMENT_CONTENT_BLOCKED);
     }
 
     if (moderationClient.isFlagged(content)) {
-      log.info("Comment blocked by moderation api: {}", content);
+      log.info("Comment blocked by moderation api");
       throw new BaseException(ErrorCode.COMMENT_CONTENT_BLOCKED);
     }
   }
