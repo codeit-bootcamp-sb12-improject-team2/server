@@ -17,6 +17,4 @@ public interface UserService {
   void delete(UUID userId, UUID requestUserId);
 
   void hardDelete(UUID userId, UUID requestUserId);
-
-  void purgeExpiredSoftDeletedUsers();
 }
