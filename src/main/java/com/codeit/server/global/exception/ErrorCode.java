@@ -50,6 +50,9 @@ public enum ErrorCode {
   ALREADY_LIKED_COMMENT("이미 좋아요를 누른 댓글입니다."),
   COMMENT_LIKE_NOT_FOUND("좋아요 내역이 존재하지 않아 취소할 수 없습니다."),
 
+  COMMENT_CONTENT_BLOCKED("부적절한 표현이 포함되어 댓글을 등록할 수 없습니다."),
+  COMMENT_MODERATION_FAILED("댓글 필터링 서비스 호출에 실패했습니다."),
+
 
   // 6. Common & Global (기본 예외 공통)
 
