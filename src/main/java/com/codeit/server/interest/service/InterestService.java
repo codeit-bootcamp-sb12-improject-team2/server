@@ -11,6 +11,8 @@ import com.codeit.server.interest.entity.InterestKeyword;
 import com.codeit.server.interest.repository.InterestKeywordRepository;
 import com.codeit.server.interest.repository.InterestRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +87,12 @@ public class InterestService {
                 size,
                 totalElements
         );
+    }
+
+    // Get interests subscribed to by a specific user (dashboard / my page)
+    public Page<InterestResponse> findSubscribedInterests(UUID userId, Pageable pageable) {
+        return interestRepository.findSubscribedInterestsByUserId(userId, pageable)
+                .map(InterestResponse::from);
     }
 
     // Update interest name and keywords
