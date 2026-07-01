@@ -156,6 +156,7 @@ public class UserActivityQueryRepositoryImpl implements UserActivityQueryReposit
     return queryFactory
         .select(Projections.constructor(ArticleActivityDto.class,
             Expressions.stringTemplate("CAST({0} AS string)", articleView.id),
+            Expressions.stringTemplate("CAST({0} AS string)", article.id),
             article.source,
             article.sourceUrl,
             article.title,
