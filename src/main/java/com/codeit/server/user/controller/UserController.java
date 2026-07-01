@@ -5,6 +5,7 @@ import com.codeit.server.user.dto.UserLoginRequest;
 import com.codeit.server.user.dto.UserRegisterRequest;
 import com.codeit.server.user.dto.UserUpdateRequest;
 import com.codeit.server.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +35,12 @@ public class UserController {
 
   @PostMapping("/login")
   @ResponseStatus(HttpStatus.OK)
-  public UserDto login(@Valid @RequestBody UserLoginRequest request) {
-    return userService.login(request);
+  public UserDto login(@Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
+    UserDto user = userService.login(request);
+
+    response.setHeader("MoNew-Request-User-ID", user.id().toString());
+
+    return user;
   }
 
   @PatchMapping("/{userId}")
