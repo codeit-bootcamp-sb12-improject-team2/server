@@ -10,6 +10,7 @@ import java.util.UUID;
 @Table(name = "interest_keyword")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class InterestKeyword {
 
