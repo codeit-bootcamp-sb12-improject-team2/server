@@ -29,8 +29,12 @@ public class CommentService {
   private final CommentLikeRepository commentLikeRepository;
   private final UserRepository userRepository;
   private final ArticleRepository articleRepository;
+  private final CommentModerationService commentModerationService;
+
 
   public CommentDto create(UUID articleId, UUID userId, String content) {
+    commentModerationService.validate(content);
+
     User user = getUser(userId);
     Article article = getArticle(articleId);
 
