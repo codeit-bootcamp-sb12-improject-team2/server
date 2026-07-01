@@ -25,7 +25,7 @@ public class NotificationController {
 
   @GetMapping
   public ResponseEntity<CursorPageResponseNotificationDto> getNotifications(
-      @RequestHeader("Monew-User-Id") UUID userId,
+      @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID userId,
       @RequestParam(value = "cursor", required = false) String cursor,
       @RequestParam(value = "after", required = false) String after,
       @RequestParam(value = "limit", defaultValue = "50") int limit
@@ -46,7 +46,7 @@ public class NotificationController {
 
   @PatchMapping("/{notificationId}")
   public ResponseEntity<Void> confirmNotification(
-      @RequestHeader UUID userId,
+      @RequestHeader("Monew-Request-User-ID") UUID userId,
       @PathVariable UUID notificationId
   ) {
     notificationService.confirmNotification(userId, notificationId);

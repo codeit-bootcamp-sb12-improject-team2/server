@@ -41,7 +41,7 @@ public class NotificationServiceImpl implements NotificationService {
         (!resultPage.isEmpty() && hasNext) ? resultPage.get(resultPage.size() - 1) : null;
 
     String nextCursorStr = (lastItem != null) ? lastItem.getId().toString() : null;
-    String nextAfterStr = (lastItem != null) ? lastItem.getCreatedAt().toString() : null;
+    String nextAfterStr = (lastItem != null && lastItem.getCreatedAt() != null) ? lastItem.getCreatedAt().toString() : null;
 
     return CursorPageResponseNotificationDto.builder()
         .content(content)
@@ -98,8 +98,8 @@ public class NotificationServiceImpl implements NotificationService {
   private NotificationDto convertToDto(Notification entity) {
     return NotificationDto.builder()
         .id(entity.getId())
-        .createdAt(entity.getCreatedAt())
-        .updatedAt(entity.getUpdatedAt())
+        .createdAt(entity.getCreatedAt() != null ? entity.getCreatedAt() : Instant.now())
+        .updatedAt(entity.getUpdatedAt() != null ? entity.getUpdatedAt() : Instant.now())
         .confirmed(entity.isConfirmed())
         .userId(entity.getUserId())
         .content(entity.getContent())

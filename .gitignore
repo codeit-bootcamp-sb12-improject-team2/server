@@ -37,3 +37,6 @@ out/
 *.log
 logs/
 **/logs/**
+
+# resources
+resources/

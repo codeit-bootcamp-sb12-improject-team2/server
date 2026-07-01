@@ -24,6 +24,4 @@ public class ArticleView extends BaseEntity {
     @Column(nullable = false)
     private UUID userId;
 
-    @Column(nullable = false)
-    private Instant createdAt;
 }
