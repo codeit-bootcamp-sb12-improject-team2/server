@@ -1,19 +1,16 @@
 package com.codeit.server.interest.entity;
 
-
-import com.codeit.server.global.common.BaseEntity;
-import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-
+import com.codeit.server.global.common.BaseEntity;
+import com.github.f4b6a3.uuid.UuidCreator;
 import java.util.UUID;
 
 @Entity
 @Table(name = "interest_keyword")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder
+@Builder
 public class InterestKeyword {
 
     @Id
