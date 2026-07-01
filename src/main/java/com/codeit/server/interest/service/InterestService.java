@@ -86,6 +86,12 @@ public class InterestService {
                 totalElements
         );
     }
+    
+        // Get interests subscribed to by a specific user (dashboard / my page)
+    public Page<InterestResponse> findSubscribedInterests(UUID userId, Pageable pageable) {
+        return interestRepository.findSubscribedInterestsByUserId(userId, pageable)
+                .map(InterestResponse::from);
+    }
 
     // Update interest name and keywords
     @Transactional
