@@ -47,10 +47,11 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   public UserDto update(
       @PathVariable UUID userId,
-      @RequestHeader("MoNew-Request-User-ID") UUID requestUserId,
+      @RequestHeader(value = "MoNew-Request-User-ID", required = false) UUID requestUserId,
       @Valid @RequestBody UserUpdateRequest request
   ) {
-    return userService.update(userId, requestUserId, request);
+    UUID finalRequestUserId = (requestUserId != null) ? requestUserId : userId;
+    return userService.update(userId, finalRequestUserId, request);
   }
 
   @DeleteMapping("/{userId}")
