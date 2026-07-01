@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,8 +29,8 @@ public class InterestResponse {
                 .keywords(interest.getKeywords().stream()
                         .map(InterestKeyword::getKeyword)
                         .toList())
-                .createdAt(LocalDateTime.from(interest.getCreatedAt()))
-                .updatedAt(LocalDateTime.from(interest.getUpdatedAt()))
+                .createdAt(LocalDateTime.ofInstant(interest.getCreatedAt(), ZoneOffset.UTC))
+                .updatedAt(LocalDateTime.ofInstant(interest.getUpdatedAt(), ZoneOffset.UTC))
                 .build();
     }
 }
