@@ -54,6 +54,7 @@ public class CommentService {
     validateOwner(comment, userId);
     validateNotDeleted(comment);
 
+    commentModerationService.validate(content);
     comment.updateContent(content);
 
     User user = getUser(comment.getUserId());
