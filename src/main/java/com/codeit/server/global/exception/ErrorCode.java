@@ -24,6 +24,7 @@ public enum ErrorCode {
   ARTICLE_NOT_DELETED("삭제되지 않은 기사는 복구할 수 없습니다."),
   ARTICLE_VIEW_RECORD_FAILED("기사 조회수 등록에 실패했습니다."),
 
+  INVALID_RANKING_TYPE("지원하지 않는 랭킹 타입입니다."),
 
   // 3. Notification 도메인 (알림 관리)
 
