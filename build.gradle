@@ -61,6 +61,12 @@ dependencies {
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
+	// jsoup
+	implementation 'org.jsoup:jsoup:1.18.1'
+
+	// https://github.com/googleapis/java-genai
+	implementation "com.google.genai:google-genai:1.60.0"
+  
 	// Jackson
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 
