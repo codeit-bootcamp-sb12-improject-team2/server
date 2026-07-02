@@ -66,6 +66,13 @@ dependencies {
 
 	// https://github.com/googleapis/java-genai
 	implementation "com.google.genai:google-genai:1.60.0"
+  
+	// Jackson
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+
+	// AWS SDK v2 (S3)
+	implementation platform("software.amazon.awssdk:bom:2.35.10")
+	implementation "software.amazon.awssdk:s3"
 }
 
 tasks.named('test') {

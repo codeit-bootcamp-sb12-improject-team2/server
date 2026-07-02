@@ -1,6 +1,6 @@
-package com.codeit.server.batch.job.articlecollect;
+package com.codeit.server.batch.job.articlebackup;
 
-import com.codeit.server.batch.job.articlecollect.tasklet.ArticleCollectTasklet;
+import com.codeit.server.batch.job.articlebackup.tasklet.ArticleBackupTasklet;
 import com.codeit.server.batch.monitoring.BatchMetricsJobExecutionListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -14,25 +14,26 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class ArticleCollectJobConfig {
+public class ArticleBackupJobConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    private final ArticleCollectTasklet articleCollectTasklet;
+    private final ArticleBackupTasklet articleBackupTasklet;
     private final BatchMetricsJobExecutionListener batchMetricsJobExecutionListener;
 
     @Bean
-    public Job articleCollectJob() {
-        return new JobBuilder("articleCollectJob", jobRepository)
+    public Job articleBackupJob() {
+        return new JobBuilder("articleBackupJob", jobRepository)
                 .listener(batchMetricsJobExecutionListener)
-                .start(articleCollectStep())
+                .start(articleBackupStep())
                 .build();
     }
 
     @Bean
-    public Step articleCollectStep() {
-        return new StepBuilder("articleCollectStep", jobRepository)
-                .tasklet(articleCollectTasklet, transactionManager)
+    public Step articleBackupStep() {
+        return new StepBuilder("articleBackupStep", jobRepository)
+                .tasklet(articleBackupTasklet, transactionManager)
                 .build();
     }
+
 }

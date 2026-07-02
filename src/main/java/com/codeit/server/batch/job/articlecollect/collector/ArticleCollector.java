@@ -9,5 +9,11 @@ public interface ArticleCollector {
 
     boolean supportsKeywordSearch();
 
-    List<CollectedArticle> collect(String keyword);
+    default List<CollectedArticle> collect(String keyword) {
+        return List.of();
+    }
+
+    default List<CollectedArticle> collect() {
+        return List.of();
+    }
 }
