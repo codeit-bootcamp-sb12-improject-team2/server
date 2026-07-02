@@ -1,9 +1,6 @@
 package com.codeit.server.article.service;
 
-import com.codeit.server.article.dto.ArticleDto;
-import com.codeit.server.article.dto.ArticleSearchRequest;
-import com.codeit.server.article.dto.ArticleViewDto;
-import com.codeit.server.article.dto.CursorPageResponseArticle;
+import com.codeit.server.article.dto.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,5 +12,5 @@ public interface ArticleService {
     void deleteArticle(UUID articleId);
     void hardDeleteArticle(UUID articleId);
     List<String> findSource();
-    // restoreService(String fromDate, String toDate);
+    ArticleRestoreResultDto restoreArticles(String from, String to);
 }

@@ -1,12 +1,10 @@
 package com.codeit.server.article.repository;
 
-import com.codeit.server.article.dto.ArticleDto;
-import com.codeit.server.article.dto.ArticleQueryDto;
-import com.codeit.server.article.dto.ArticleSearchRequest;
-import com.codeit.server.article.dto.CursorPageResponseArticle;
+import com.codeit.server.article.dto.*;
 import com.codeit.server.article.entity.QArticle;
 import com.codeit.server.article.entity.QArticleInterest;
 import com.codeit.server.article.entity.QArticleView;
+import com.codeit.server.batch.job.articlebackup.dto.ArticleBackupDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
@@ -145,6 +143,45 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .where(a.isDeleted.isFalse())
                 .orderBy(a.source.asc())
                 .fetch();
+    }
+
+    @Override
+    public List<ArticleBackupDto> findBackup(
+            Instant start,
+            Instant end
+    ) {
+        return queryFactory
+                .select(Projections.constructor(
+                        ArticleBackupDto.class,
+                        a.id,
+                        a.source,
+                        a.sourceUrl,
+                        a.title,
+                        a.publishDate,
+                        a.summary,
+                        a.viewCount,
+                        a.commentCount,
+                        a.createdAt,
+                        a.updatedAt,
+                        a.isDeleted
+                ))
+                .from(a)
+                .where(
+                        a.createdAt.goe(start),
+                        a.createdAt.lt(end)
+                )
+                .orderBy(a.createdAt.asc())
+                .fetch();
+    }
+
+    @Override
+    public void restoreAuditFields(UUID articleId, Instant createdAt, Instant updatedAt) {
+        queryFactory
+                .update(a)
+                .set(a.createdAt, createdAt)
+                .set(a.updatedAt, updatedAt)
+                .where(a.id.eq(articleId))
+                .execute();
     }
 
     private BooleanBuilder buildSearchCondition(ArticleSearchRequest request) {
