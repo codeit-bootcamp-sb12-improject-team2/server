@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Getter
@@ -23,7 +24,7 @@ public class SubscriptionResponse {
                 .userId(subscription.getUser().getId())
                 .interestId(subscription.getInterest().getId())
                 .interestName(subscription.getInterest().getName())
-                .createdAt(LocalDateTime.from(subscription.getCreatedAt()))
+                .createdAt(LocalDateTime.ofInstant(subscription.getCreatedAt(), ZoneId.systemDefault()))
                 .build();
     }
 }

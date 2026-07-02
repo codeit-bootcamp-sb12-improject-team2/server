@@ -38,10 +38,9 @@ public class InterestController {
     // POST /api/interests - create a new interest
     @PostMapping
     public ResponseEntity<InterestResponse> create(
-            @RequestBody @Valid InterestCreateRequest request,
-            @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
+            @RequestBody @Valid InterestCreateRequest request
     ) {
-        InterestResponse response = interestService.create(request, userId);
+        InterestResponse response = interestService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

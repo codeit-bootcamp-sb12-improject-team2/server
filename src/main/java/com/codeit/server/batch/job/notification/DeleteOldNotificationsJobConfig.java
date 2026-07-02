@@ -1,6 +1,7 @@
 package com.codeit.server.batch.job.notification;
 
 import com.codeit.server.batch.job.notification.tasklet.DeleteOldNotificationsTasklet;
+import com.codeit.server.batch.monitoring.BatchMetricsJobExecutionListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -18,11 +19,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class DeleteOldNotificationsJobConfig {
 
     private final DeleteOldNotificationsTasklet deleteOldNotificationsTasklet;
+    private final BatchMetricsJobExecutionListener batchMetricsJobExecutionListener;
 
     @Bean
     public Job deleteOldNotificationsJob(JobRepository jobRepository, Step deleteOldNotificationsStep) {
         return new JobBuilder("deleteOldNotificationsJob", jobRepository)
                 .start(deleteOldNotificationsStep)
+                .listener(batchMetricsJobExecutionListener)
                 .build();
     }
 
