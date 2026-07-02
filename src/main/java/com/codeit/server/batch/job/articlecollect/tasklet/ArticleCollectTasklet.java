@@ -14,6 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -21,6 +22,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ArticleCollectTasklet implements Tasklet {
@@ -34,10 +36,16 @@ public class ArticleCollectTasklet implements Tasklet {
     @Override
     @Transactional
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+        log.info(">>>>>> Starting ArticleCollectTasklet");
+
         List<InterestKeyword> interestKeywords = interestKeywordRepository.findAll();
+
+        log.info("Loaded {} interest keywords.", interestKeywords.size());
 
         collectFromKeywordSearchCollectors(interestKeywords); // NAVER
         collectFromRssCollectors(interestKeywords);           // RSS
+
+        log.info("Successfully finished ArticleCollectTasklet");
 
         return RepeatStatus.FINISHED;
     }
@@ -54,8 +62,13 @@ public class ArticleCollectTasklet implements Tasklet {
                         )
                 ));
 
+        log.info("Start collecting articles from keyword search. keywordCount={}",
+                keywordInterestIdsMap.size());
+
         for (Map.Entry<String, List<UUID>> entry : keywordInterestIdsMap.entrySet()) {
             String keyword = entry.getKey();
+            log.debug("Collecting keyword={}", keyword);
+
             List<UUID> interestIds = entry.getValue();
 
             for (ArticleCollector collector : articleCollectors) {
@@ -107,8 +120,13 @@ public class ArticleCollectTasklet implements Tasklet {
 
     private Article saveArticleIfNotExists(CollectedArticle collectedArticle) {
         return articleRepository.findBySourceUrl(collectedArticle.getSourceUrl())
-                .orElseGet(() ->
-                        articleRepository.save(collectedArticle.toEntity()));
+                .orElseGet(() ->{
+                    log.debug("New article saved. source={}, title={}",
+                            collectedArticle.getSource(),
+                            collectedArticle.getTitle());
+
+                    return articleRepository.save(collectedArticle.toEntity());
+                });
     }
 
     private void saveArticleInterestIfNotExists(UUID articleId, UUID interestId) {

@@ -1,6 +1,7 @@
 package com.codeit.server.batch.job.articlecollect;
 
 import com.codeit.server.batch.job.articlecollect.tasklet.ArticleCollectTasklet;
+import com.codeit.server.batch.monitoring.BatchMetricsJobExecutionListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -18,10 +19,12 @@ public class ArticleCollectJobConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final ArticleCollectTasklet articleCollectTasklet;
+    private final BatchMetricsJobExecutionListener batchMetricsJobExecutionListener;
 
     @Bean
     public Job articleCollectJob() {
         return new JobBuilder("articleCollectJob", jobRepository)
+                .listener(batchMetricsJobExecutionListener)
                 .start(articleCollectStep())
                 .build();
     }
