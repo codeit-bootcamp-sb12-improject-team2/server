@@ -50,7 +50,7 @@ public class GeminiClient {
     </article_content>
     """;
 
-  private static final String MODEL = "gemini-2.5-flash-lite";
+  private static final String MODEL = "gemini-2.5-flash";
 
   private final ObjectMapper objectMapper;
   private final Client geminiClient;
@@ -91,7 +91,7 @@ public class GeminiClient {
         .responseMimeType("application/json")
         .candidateCount(1)
         .responseSchema(schema)
-        .maxOutputTokens(512)
+        .maxOutputTokens(256)
         .build();
   }
 
