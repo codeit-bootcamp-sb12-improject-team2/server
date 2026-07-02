@@ -20,11 +20,13 @@ public class UserDeleteJobConfig {
   private final JobRepository jobRepository;
   private final PlatformTransactionManager transactionManager;
   private final UserRepository userRepository;
+  private final BatchMetricsJobExecutionListener batchMetricsJobExecutionListener;
 
   @Bean(name = "userDeleteJob")
   public Job userDeleteJob(Step userDeleteStep) {
     return new JobBuilder("userDeleteJob", jobRepository)
         .start(userDeleteStep)
+        .listener(batchMetricsJobExecutionListener)
         .build();
   }
 
