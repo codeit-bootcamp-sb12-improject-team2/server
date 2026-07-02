@@ -4,12 +4,10 @@ import com.codeit.server.article.entity.Article;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleRankingDto {
@@ -19,9 +17,10 @@ public class ArticleRankingDto {
   private String source;
   private int viewCount;
   private int commentCount;
+  private long rankingCount;
   private Instant publishDate;
 
-  public static ArticleRankingDto of(int rank, Article article) {
+  public static ArticleRankingDto of(int rank, Article article, long rankingCount) {
     return new ArticleRankingDto(
         rank,
         article.getId(),
@@ -29,6 +28,7 @@ public class ArticleRankingDto {
         article.getSource(),
         article.getViewCount(),
         article.getCommentCount(),
+        rankingCount,
         article.getPublishDate()
     );
   }
