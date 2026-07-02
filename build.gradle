@@ -60,6 +60,13 @@ dependencies {
 	implementation 'org.mapstruct:mapstruct:1.6.3'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+	// Jackson
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+
+	// AWS SDK v2 (S3)
+	implementation platform("software.amazon.awssdk:bom:2.35.10")
+	implementation "software.amazon.awssdk:s3"
 }
 
 tasks.named('test') {

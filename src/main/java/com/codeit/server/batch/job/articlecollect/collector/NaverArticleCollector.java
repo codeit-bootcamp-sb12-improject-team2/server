@@ -27,13 +27,14 @@ public class NaverArticleCollector implements ArticleCollector {
 
     @Override
     public List<CollectedArticle> collect(String keyword) {
+        sleep();
         NaverArticleResponse response = articleCollectRestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
                         .host("openapi.naver.com")
                         .path("/v1/search/news.json")
                         .queryParam("query", keyword)
-                        .queryParam("display", 100)
+                        .queryParam("display", 10) // 100은 너무 빨라 속도 제한
                         .queryParam("start", 1)
                         .queryParam("sort", "date")
                         .build())
@@ -41,6 +42,8 @@ public class NaverArticleCollector implements ArticleCollector {
                 .header("X-Naver-Client-Secret", clientSecret)
                 .retrieve()
                 .body(NaverArticleResponse.class);
+        System.out.println(response);
+
 
         if (response == null || response.getItems() == null) {
             return List.of();
@@ -93,5 +96,13 @@ public class NaverArticleCollector implements ArticleCollector {
                 .replace("&lt;", "<")
                 .replace("&gt;", ">")
                 .trim();
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(800); // 0.8초 대기
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
