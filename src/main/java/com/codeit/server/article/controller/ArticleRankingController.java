@@ -3,6 +3,7 @@ package com.codeit.server.article.controller;
 import com.codeit.server.article.dto.ArticleRankingResponse;
 import com.codeit.server.article.service.ArticleRankingService;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/articles/rankings")
 public class ArticleRankingController {
-  private static final int RANKING_LIMIT = 3;
-
   private final ArticleRankingService articleRankingService;
 
   @GetMapping
@@ -25,10 +24,9 @@ public class ArticleRankingController {
       @RequestParam(value = "type", defaultValue = "VIEW")
       String rankType
   ) {
-    return articleRankingService.getDailyRanking(
-        LocalDate.now(),
-        rankType,
-        RANKING_LIMIT
+    return articleRankingService.getTodayRanking(
+        LocalDate.now(ZoneId.of("Asia/Seoul")),
+        rankType
     );
   }
 }
