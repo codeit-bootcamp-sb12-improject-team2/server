@@ -29,7 +29,7 @@ public class InterestService {
 
     // Create a new interest along with its keywords
     @Transactional
-    public InterestResponse create(InterestCreateRequest request, UUID userId) {
+    public InterestResponse create(InterestCreateRequest request) {
         if (interestRepository.existsByName(request.getName())) {
             throw new BaseException(ErrorCode.INTEREST_ALREADY_EXISTS);
         }
