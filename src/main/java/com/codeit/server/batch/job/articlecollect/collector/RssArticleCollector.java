@@ -1,22 +1,28 @@
 package com.codeit.server.batch.job.articlecollect.collector;
 
 import com.codeit.server.batch.job.articlecollect.dto.CollectedArticle;
-import java.io.StringReader;
+import com.codeit.server.batch.job.articlecollect.dto.RssItem;
+import com.codeit.server.batch.job.articlecollect.dto.RssResponse;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilderFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.client.RestClient;
-import org.w3c.dom.*;
-import org.xml.sax.InputSource;
 
-@RequiredArgsConstructor
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.web.client.RestClient;
+
 public abstract class RssArticleCollector implements ArticleCollector {
 
     protected final RestClient articleCollectRestClient;
+
+    private final XmlMapper xmlMapper = XmlMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();
+
+    protected RssArticleCollector(RestClient articleCollectRestClient) {
+        this.articleCollectRestClient = articleCollectRestClient;
+    }
 
     @Override
     public boolean supportsKeywordSearch() {
@@ -24,71 +30,58 @@ public abstract class RssArticleCollector implements ArticleCollector {
     }
 
     protected List<CollectedArticle> collectFromRss(String source, String rssUrl) {
-        String xml = articleCollectRestClient.get()
-                .uri(rssUrl)
-                .retrieve()
-                .body(String.class);
+        System.out.println("RSS 호출 source = " + source + ", url = " + rssUrl);
 
-        if (xml == null || xml.isBlank()) {
-            return List.of();
-        }
-
-        return parseRss(source, xml);
-    }
-
-    private List<CollectedArticle> parseRss(String source, String xml) {
         try {
-            Document document = DocumentBuilderFactory.newInstance()
-                    .newDocumentBuilder()
-                    .parse(new InputSource(new StringReader(xml)));
+            String xml = articleCollectRestClient.get()
+                    .uri(rssUrl)
+                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36")
+                    .header("Accept", "application/rss+xml, application/xml, text/xml, */*")
+                    .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
+                    .retrieve()
+                    .body(String.class);
 
-            NodeList items = document.getElementsByTagName("item");
-
-            List<CollectedArticle> articles = new ArrayList<>();
-
-            for (int i = 0; i < items.getLength(); i++) {
-                Element item = (Element) items.item(i);
-
-                String title = getText(item, "title");
-                String link = getText(item, "link");
-                String description = getText(item, "description");
-                String pubDate = getText(item, "pubDate");
-
-                if (link == null || link.isBlank()) {
-                    continue;
-                }
-
-                articles.add(
-                        CollectedArticle.builder()
-                                .source(source)
-                                .sourceUrl(link)
-                                .title(cleanText(title))
-                                .summary(cleanText(description))
-                                .publishDate(parsePubDate(pubDate))
-                                .build()
-                );
+            if (xml == null || xml.isBlank()) {
+                return List.of();
             }
 
-            return articles;
+            RssResponse response = xmlMapper.readValue(xml, RssResponse.class);
+
+            if (response.getChannel() == null || response.getChannel().getItems() == null) {
+                return List.of();
+            }
+
+            return response.getChannel().getItems().stream()
+                    .map(item -> toCollectedArticle(source, item))
+                    .filter(article -> article.getSourceUrl() != null && !article.getSourceUrl().isBlank())
+                    .toList();
+
         } catch (Exception e) {
-            throw new IllegalStateException("RSS 파싱 실패: " + source, e);
+            System.out.println("RSS 수집 실패: " + source + " / " + rssUrl);
+            System.out.println(e.getMessage());
+            return List.of();
+//            throw new IllegalStateException("RSS 파싱 실패: " + source, e);
         }
     }
 
-    private String getText(Element item, String tagName) {
-        NodeList nodes = item.getElementsByTagName(tagName);
+    private CollectedArticle toCollectedArticle(String source, RssItem item) {
+        return CollectedArticle.builder()
+                .source(source)
+                .sourceUrl(cleanText(item.getLink()))
+                .title(cleanText(item.getTitle()))
+                .summary(resolveSummary(item))
+                .publishDate(parsePubDate(item.getPubDate()))
+                .build();
+    }
 
-        if (nodes.getLength() == 0) {
-            return "";
+    private String resolveSummary(RssItem item) {
+        String description = cleanText(item.getDescription());
+
+        if (description != null && !description.isBlank()) {
+            return description;
         }
 
-        Node node = nodes.item(0);
-
-        if (node == null) {
-            return "";
-        }
-
-        return node.getTextContent();
+        return cleanText(item.getContent());
     }
 
     private Instant parsePubDate(String pubDate) {
