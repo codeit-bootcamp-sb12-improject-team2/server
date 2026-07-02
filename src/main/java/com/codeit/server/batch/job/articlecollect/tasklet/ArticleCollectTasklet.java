@@ -9,7 +9,9 @@ import com.codeit.server.batch.job.articlecollect.dto.CollectedArticle;
 import com.codeit.server.interest.entity.InterestKeyword;
 import com.codeit.server.interest.repository.InterestKeywordRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.StepContribution;
@@ -34,33 +36,73 @@ public class ArticleCollectTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
         List<InterestKeyword> interestKeywords = interestKeywordRepository.findAll();
 
-        for (InterestKeyword interestKeyword : interestKeywords) {
-            String keyword = interestKeyword.getKeyword();
+        collectFromKeywordSearchCollectors(interestKeywords); // NAVER
+        collectFromRssCollectors(interestKeywords);           // RSS
 
-            if (keyword == null || keyword.isBlank()) {
-                continue;
-            }
+        return RepeatStatus.FINISHED;
+    }
+
+    private void collectFromKeywordSearchCollectors(List<InterestKeyword> interestKeywords) {
+        Map<String, List<UUID>> keywordInterestIdsMap = interestKeywords.stream()
+                .filter(interestKeyword -> interestKeyword.getKeyword() != null)
+                .filter(interestKeyword -> !interestKeyword.getKeyword().isBlank())
+                .collect(Collectors.groupingBy(
+                        interestKeyword -> interestKeyword.getKeyword().trim(),
+                        Collectors.mapping(
+                                interestKeyword -> interestKeyword.getInterest().getId(),
+                                Collectors.toList()
+                        )
+                ));
+
+        for (Map.Entry<String, List<UUID>> entry : keywordInterestIdsMap.entrySet()) {
+            String keyword = entry.getKey();
+            List<UUID> interestIds = entry.getValue();
 
             for (ArticleCollector collector : articleCollectors) {
+                if (!collector.supportsKeywordSearch()) {
+                    continue;
+                }
+
                 List<CollectedArticle> collectedArticles = collector.collect(keyword);
 
                 for (CollectedArticle collectedArticle : collectedArticles) {
-                    if (!collector.supportsKeywordSearch()
-                            && !containsKeyword(collectedArticle, keyword)) {
-                        continue;
-                    }
                     Article article = saveArticleIfNotExists(collectedArticle);
 
-                    saveArticleInterestIfNotExists(
-                            article.getId(),
-                            interestKeyword.getInterest().getId() // TODO : InterestKeyword에 UUID가 아니라 Interest 통으로 들어가 있음???
-//                          interestKeyword.getInterestId()
-                    );
+                    for (UUID interestId : interestIds) {
+                        saveArticleInterestIfNotExists(article.getId(), interestId);
+                    }
                 }
             }
         }
+    }
 
-        return RepeatStatus.FINISHED;
+    private void collectFromRssCollectors(List<InterestKeyword> interestKeywords) {
+        for (ArticleCollector collector : articleCollectors) {
+            if (collector.supportsKeywordSearch()) {
+                continue;
+            }
+
+            List<CollectedArticle> collectedArticles = collector.collect();
+
+            for (CollectedArticle collectedArticle : collectedArticles) {
+                for (InterestKeyword interestKeyword : interestKeywords) {
+                    String keyword = interestKeyword.getKeyword();
+
+                    if (keyword == null || keyword.isBlank()) {
+                        continue;
+                    }
+
+                    if (!containsKeyword(collectedArticle, keyword)) {
+                        continue;
+                    }
+
+                    UUID interestId = interestKeyword.getInterest().getId();
+
+                    Article article = saveArticleIfNotExists(collectedArticle);
+                    saveArticleInterestIfNotExists(article.getId(), interestId);
+                }
+            }
+        }
     }
 
     private Article saveArticleIfNotExists(CollectedArticle collectedArticle) {
