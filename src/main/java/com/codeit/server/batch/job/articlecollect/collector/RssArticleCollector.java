@@ -77,11 +77,18 @@ public abstract class RssArticleCollector implements ArticleCollector {
     private String resolveSummary(RssItem item) {
         String description = cleanText(item.getDescription());
 
-        if (description != null && !description.isBlank()) {
+        if (!description.isBlank()) {
             return description;
         }
 
-        return cleanText(item.getContent());
+        String content = cleanText(item.getContent());
+
+        if (!content.isBlank()) {
+            return content;
+        }
+
+        // description, content 모두 없으면 title 사용
+        return cleanText(item.getTitle());
     }
 
     private Instant parsePubDate(String pubDate) {
