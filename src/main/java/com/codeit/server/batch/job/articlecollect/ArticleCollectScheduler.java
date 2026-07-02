@@ -15,7 +15,7 @@ public class ArticleCollectScheduler {
     private final Job articleCollectJob;
 
     @Scheduled(cron = "0 0 * * * *") // 매 시간 정각
-//    @Scheduled(cron = "0 * * * * *") // 매 분
+//    @Scheduled(cron = "0 * * * * *") // 매 분 for test
     public void runArticleCollectJob() throws Exception {
         jobLauncher.run(
                 articleCollectJob,
