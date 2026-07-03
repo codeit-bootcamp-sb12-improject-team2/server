@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,6 +37,8 @@ public class InterestService {
 
         Interest interest = Interest.builder()
                 .name(request.getName())
+                .subscriberCount(0)
+                .keywords(new ArrayList<>())
                 .build();
         interestRepository.save(interest);
 
