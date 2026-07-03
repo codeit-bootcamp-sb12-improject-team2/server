@@ -16,25 +16,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
     // Check whether a subscription exists (used when toggling subscribe/unsubscribe)
     boolean existsByUserIdAndInterestId(UUID userId, UUID interestId);
 
-    // Retrieve a single subscription (used when unsubscribing)
-    Optional<Subscription> findByUserIdAndInterestId(UUID userId, UUID interestId);
-
-    // Retrieve the list of subscriptions for a specific user (my page)
-    Page<Subscription> findByUserId(UUID userId, Pageable pageable);
-
     List<Subscription> findAllByUserId(UUID userId);
-
-    // Retrieve the list of users subscribed to a specific interest (e.g. for notification targeting)
-    List<Subscription> findByInterestId(UUID interestId);
-
-    // Bulk delete subscriptions when an interest is deleted
-    void deleteByInterestId(UUID interestId);
-
-    // Bulk delete subscriptions when a user is deactivated/deleted
-    void deleteByUserId(UUID userId);
-
-    // Count subscribers of a specific interest (used to sync/verify subscriberCount)
-    long countByInterestId(UUID interestId);
 
     boolean existsByUserAndInterest(User user, Interest interest);
 

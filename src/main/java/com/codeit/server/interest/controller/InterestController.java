@@ -37,7 +37,7 @@ public class InterestController {
 
     // POST /api/interests - create a new interest
     @PostMapping
-    public ResponseEntity<InterestResponse> create( // 상준
+    public ResponseEntity<InterestResponse> create(
             @RequestBody @Valid InterestCreateRequest request
     ) {
         InterestResponse response = interestService.create(request);
@@ -59,15 +59,14 @@ public class InterestController {
     @DeleteMapping("/{interestId}")
     public ResponseEntity<Void> hardDelete( // 태성
             @PathVariable UUID interestId,
-            @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
+            @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID userId
     ) {
         interestService.hardDelete(interestId, userId);
         return ResponseEntity.noContent().build();
     }
 
-    // POST /api/interests/{interestId}/subscriptions - subscribe to an interest
     @PostMapping("/{interestId}/subscriptions")
-    public ResponseEntity<InterestResponse> subscribe( // 상준
+    public ResponseEntity<InterestResponse> subscribe(
             @PathVariable UUID interestId,
             @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
     ) {
@@ -75,9 +74,8 @@ public class InterestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // DELETE /api/interests/{interestId}/subscriptions - unsubscribe from an interest
     @DeleteMapping("/{interestId}/subscriptions")
-    public ResponseEntity<Void> unsubscribe( // 상준
+    public ResponseEntity<Void> unsubscribe(
             @PathVariable UUID interestId,
             @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
     ) {
