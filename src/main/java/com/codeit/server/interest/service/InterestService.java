@@ -66,13 +66,14 @@ public class InterestService {
     public CursorPageResponse<InterestResponse> search(
             String keyword,
             String orderBy,
+            String direction,
             String cursor,
             String nextAfter,
             int size,
             UUID userId
     ) {
         List<Interest> interests = interestRepository.searchWithCursor(
-                keyword, orderBy, cursor, nextAfter, size + 1, userId
+                keyword, orderBy, direction, cursor, nextAfter, size + 1, userId
         );
 
         boolean hasNext = interests.size() > size;
@@ -84,7 +85,7 @@ public class InterestService {
         if (hasNext) {
             Interest last = interests.get(interests.size() - 1);
             nextCursor = resolveNextCursor(last, orderBy);
-            newNextAfter = last.getId().toString();
+            newNextAfter = last.getCreatedAt().toString(); // UUID date-time
         }
 
         long totalElements = interestRepository.countByKeyword(keyword);
@@ -194,8 +195,8 @@ public class InterestService {
     // Resolve nextCursor value based on orderBy
     private String resolveNextCursor(Interest interest, String orderBy) {
         if (orderBy == null) return interest.getName();
-        return switch (orderBy.toUpperCase()) {
-            case "SUBSCRIBER" -> String.valueOf(interest.getSubscriberCount());
+        return switch (orderBy) {
+            case "subscriberCount" -> String.valueOf(interest.getSubscriberCount()); // subscriberCount로 변수명 수정
             default -> interest.getName();  // NAME or default
         };
     }

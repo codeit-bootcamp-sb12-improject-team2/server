@@ -25,13 +25,14 @@ public class InterestController {
     public ResponseEntity<CursorPageResponse<InterestResponse>> searchInterests(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String orderBy,
+            @RequestParam(required = false) String direction,
             @RequestParam(required = false) String cursor,
-            @RequestParam(required = false) String nextAfter,
+            @RequestParam(required = false) String after,
             @RequestParam(defaultValue = "10") int size,
             @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID userId
     ) {
         CursorPageResponse<InterestResponse> response =
-                interestService.search(keyword, orderBy, cursor, nextAfter, size, userId);
+                interestService.search(keyword, orderBy, direction, cursor, after, size, userId);
         return ResponseEntity.ok(response);
     }
 

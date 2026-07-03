@@ -11,6 +11,7 @@ public interface InterestRepositoryCustom {
             String keyword,
             String orderBy,
             String cursor,
+            String direction,
             String nextAfter,
             int limit,
             UUID userId
