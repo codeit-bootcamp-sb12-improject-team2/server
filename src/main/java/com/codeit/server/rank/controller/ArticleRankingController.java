@@ -1,9 +1,10 @@
-package com.codeit.server.article.controller;
+package com.codeit.server.rank.controller;
 
-import com.codeit.server.article.dto.ArticleRankingResponse;
-import com.codeit.server.article.service.ArticleRankingService;
+import com.codeit.server.rank.service.ArticleRankingService;
 import java.time.LocalDate;
 import java.time.ZoneId;
+
+import com.codeit.server.rank.dto.ArticleRankingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;

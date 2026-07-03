@@ -77,4 +77,17 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+
+    // Load .env properties into test environment variables
+    def envFile = file('.env')
+    if (envFile.exists()) {
+        envFile.readLines().each { line ->
+            if (line.trim() && !line.trim().startsWith('#')) {
+                def parts = line.split('=', 2)
+                if (parts.length == 2) {
+                    environment parts[0].trim(), parts[1].trim()
+                }
+            }
+        }
+    }
 }

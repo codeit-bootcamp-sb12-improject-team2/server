@@ -1,4 +1,4 @@
-package com.codeit.server.article.dto;
+package com.codeit.server.rank.dto;
 
 import com.codeit.server.article.entity.Article;
 import java.time.Instant;
