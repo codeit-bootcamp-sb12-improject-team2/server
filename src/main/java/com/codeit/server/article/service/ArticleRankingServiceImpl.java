@@ -2,12 +2,11 @@ package com.codeit.server.article.service;
 
 import com.codeit.server.article.dto.ArticleRankingDto;
 import com.codeit.server.article.dto.ArticleRankingResponse;
-import com.codeit.server.article.repository.ArticleRepository;
+import com.codeit.server.article.entity.ArticleRanking;
+import com.codeit.server.article.repository.ArticleRankingRepository;
 import com.codeit.server.global.exception.BaseException;
 import com.codeit.server.global.exception.ErrorCode;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +17,27 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ArticleRankingServiceImpl implements ArticleRankingService {
-  private final ArticleRepository articleRepository;
+  private final ArticleRankingRepository articleRankingRepository;
 
   @Override
   public ArticleRankingResponse getTodayRanking(LocalDate date, String rankType) {
     String normalizedType = rankType.toUpperCase(Locale.ROOT);
-    ZoneId zone = ZoneId.of("Asia/Seoul");
-    Instant start = date.atStartOfDay(zone).toInstant();
-    Instant end = date.plusDays(1).atStartOfDay(zone).toInstant();
+    if (!normalizedType.equals("VIEW") && !normalizedType.equals("COMMENT")) {
+      throw new BaseException(ErrorCode.INVALID_RANKING_TYPE);
+    }
 
-    List<ArticleRankingDto> articles = switch (normalizedType) {
-      case "VIEW" -> articleRepository.findTopArticlesByViewCount(start, end);
-      case "COMMENT" -> articleRepository.findTopArticlesByCommentCount(start, end);
-      default -> throw new BaseException(ErrorCode.INVALID_RANKING_TYPE);
-    };
-    return ArticleRankingResponse.of(date, normalizedType, articles);
+    LocalDate queryDate = date;
+    List<ArticleRanking> rankings = articleRankingRepository.findByRankingDateAndRankTypeOrderByRankingAsc(queryDate, normalizedType);
+
+    if (rankings.isEmpty()) {
+      queryDate = date.minusDays(1);
+      rankings = articleRankingRepository.findByRankingDateAndRankTypeOrderByRankingAsc(queryDate, normalizedType);
+    }
+
+    List<ArticleRankingDto> articles = rankings.stream()
+        .map(r -> ArticleRankingDto.of(r.getRanking(), r.getArticle(), r.getRankingCount()))
+        .toList();
+
+    return ArticleRankingResponse.of(queryDate, normalizedType, articles);
   }
 }
