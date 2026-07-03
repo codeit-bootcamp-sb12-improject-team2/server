@@ -33,6 +33,10 @@ out/
 *.yml
 *.yaml
 
+# GitHub Actions workflows
+!.github/workflows/*.yml
+
+
 # logs
 *.log
 logs/
