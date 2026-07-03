@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: server
+
+  # Spring Batch Settings
+  batch:
+    job:
+      enabled: false
+
+  # Local Docker Compose Settings
+  docker:
+    compose:
+      enabled: false
+
+  profiles:
+    active: prod
+
+# API Keys & External Services
+naver:
+  client-id: ${NAVER_CLIENT_ID}
+  client-secret: ${NAVER_CLIENT_SECRET}
+
+openai:
+  api-key: ${OPENAI_API_KEY}
+
+gemini:
+  api-key: ${GEMINI_API_KEY}
+
+aws:
+  s3:
+    region: ap-northeast-2
+    bucket: ${AWS_S3_BUCKET:${AWS_BUCKET}}
+    article-backup-prefix: article-backups
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
