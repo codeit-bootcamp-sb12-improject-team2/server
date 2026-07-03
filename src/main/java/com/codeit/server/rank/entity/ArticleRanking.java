@@ -1,5 +1,6 @@
-package com.codeit.server.article.entity;
+package com.codeit.server.rank.entity;
 
+import com.codeit.server.article.entity.Article;
 import com.codeit.server.global.common.BaseEntity;
 import jakarta.persistence.*;
 import java.time.LocalDate;

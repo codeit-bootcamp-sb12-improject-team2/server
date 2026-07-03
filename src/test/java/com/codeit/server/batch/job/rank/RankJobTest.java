@@ -3,9 +3,9 @@ package com.codeit.server.batch.job.rank;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeit.server.article.entity.Article;
-import com.codeit.server.article.entity.ArticleRanking;
+import com.codeit.server.rank.entity.ArticleRanking;
 import com.codeit.server.article.entity.ArticleView;
-import com.codeit.server.article.repository.ArticleRankingRepository;
+import com.codeit.server.rank.repository.ArticleRankingRepository;
 import com.codeit.server.article.repository.ArticleRepository;
 import com.codeit.server.article.repository.ArticleViewRepository;
 import com.codeit.server.comment.entity.Comment;

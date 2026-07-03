@@ -1,6 +1,6 @@
-package com.codeit.server.article.repository;
+package com.codeit.server.rank.repository;
 
-import com.codeit.server.article.entity.ArticleRanking;
+import com.codeit.server.rank.entity.ArticleRanking;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;

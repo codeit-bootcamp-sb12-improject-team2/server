@@ -1,7 +1,7 @@
 package com.codeit.server.article.repository;
 
 import com.codeit.server.article.dto.ArticleDto;
-import com.codeit.server.article.dto.ArticleRankingDto;
+import com.codeit.server.rank.dto.ArticleRankingDto;
 import com.codeit.server.article.dto.ArticleSearchRequest;
 import com.codeit.server.article.dto.CursorPageResponseArticle;
 import com.codeit.server.batch.job.articlebackup.dto.ArticleBackupDto;

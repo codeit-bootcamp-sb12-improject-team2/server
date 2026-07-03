@@ -1,9 +1,9 @@
 package com.codeit.server.batch.job.rank.tasklet;
 
-import com.codeit.server.article.dto.ArticleRankingDto;
+import com.codeit.server.rank.dto.ArticleRankingDto;
 import com.codeit.server.article.entity.Article;
-import com.codeit.server.article.entity.ArticleRanking;
-import com.codeit.server.article.repository.ArticleRankingRepository;
+import com.codeit.server.rank.entity.ArticleRanking;
+import com.codeit.server.rank.repository.ArticleRankingRepository;
 import com.codeit.server.article.repository.ArticleRepository;
 import java.time.Instant;
 import java.time.LocalDate;

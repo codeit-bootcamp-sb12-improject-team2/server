@@ -1,9 +1,9 @@
-package com.codeit.server.article.service;
+package com.codeit.server.rank.service;
 
-import com.codeit.server.article.dto.ArticleRankingDto;
-import com.codeit.server.article.dto.ArticleRankingResponse;
-import com.codeit.server.article.entity.ArticleRanking;
-import com.codeit.server.article.repository.ArticleRankingRepository;
+import com.codeit.server.rank.dto.ArticleRankingDto;
+import com.codeit.server.rank.dto.ArticleRankingResponse;
+import com.codeit.server.rank.entity.ArticleRanking;
+import com.codeit.server.rank.repository.ArticleRankingRepository;
 import com.codeit.server.global.exception.BaseException;
 import com.codeit.server.global.exception.ErrorCode;
 import java.time.LocalDate;
