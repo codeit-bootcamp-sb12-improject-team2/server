@@ -22,7 +22,7 @@ public class InterestController {
 
     // GET /api/interests - search with cursor-based pagination
     @GetMapping
-    public ResponseEntity<CursorPageResponse<InterestResponse>> searchInterests(
+    public ResponseEntity<CursorPageResponse<InterestResponse>> searchInterests( // 태성
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String orderBy,
             @RequestParam(required = false) String cursor,
@@ -37,7 +37,7 @@ public class InterestController {
 
     // POST /api/interests - create a new interest
     @PostMapping
-    public ResponseEntity<InterestResponse> create(
+    public ResponseEntity<InterestResponse> create( // 상준
             @RequestBody @Valid InterestCreateRequest request
     ) {
         InterestResponse response = interestService.create(request);
@@ -46,7 +46,7 @@ public class InterestController {
 
     // PATCH /api/interests/{interestId} - update interest name/keywords
     @PatchMapping("/{interestId}")
-    public ResponseEntity<InterestResponse> update(
+    public ResponseEntity<InterestResponse> update( // 태성
             @PathVariable UUID interestId,
             @RequestBody @Valid InterestUpdateRequest request,
             @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
@@ -57,7 +57,7 @@ public class InterestController {
 
     // DELETE /api/interests/{interestId} - hard delete an interest
     @DeleteMapping("/{interestId}")
-    public ResponseEntity<Void> hardDelete(
+    public ResponseEntity<Void> hardDelete( // 태성
             @PathVariable UUID interestId,
             @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
     ) {
@@ -67,7 +67,7 @@ public class InterestController {
 
     // POST /api/interests/{interestId}/subscriptions - subscribe to an interest
     @PostMapping("/{interestId}/subscriptions")
-    public ResponseEntity<InterestResponse> subscribe(
+    public ResponseEntity<InterestResponse> subscribe( // 상준
             @PathVariable UUID interestId,
             @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
     ) {
@@ -77,7 +77,7 @@ public class InterestController {
 
     // DELETE /api/interests/{interestId}/subscriptions - unsubscribe from an interest
     @DeleteMapping("/{interestId}/subscriptions")
-    public ResponseEntity<Void> unsubscribe(
+    public ResponseEntity<Void> unsubscribe( // 상준
             @PathVariable UUID interestId,
             @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
     ) {
