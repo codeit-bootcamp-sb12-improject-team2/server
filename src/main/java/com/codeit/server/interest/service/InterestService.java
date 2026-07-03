@@ -8,8 +8,12 @@ import com.codeit.server.interest.dto.InterestResponse;
 import com.codeit.server.interest.dto.InterestUpdateRequest;
 import com.codeit.server.interest.entity.Interest;
 import com.codeit.server.interest.entity.InterestKeyword;
+import com.codeit.server.interest.entity.Subscription;
 import com.codeit.server.interest.repository.InterestKeywordRepository;
 import com.codeit.server.interest.repository.InterestRepository;
+import com.codeit.server.interest.repository.SubscriptionRepository;
+import com.codeit.server.user.entity.User;
+import com.codeit.server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +29,8 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class InterestService {
 
+    private final UserRepository userRepository;
+    private final SubscriptionRepository subscriptionRepository;
     private final InterestRepository interestRepository;
     private final InterestKeywordRepository interestKeywordRepository;
 
@@ -83,8 +89,16 @@ public class InterestService {
 
         long totalElements = interestRepository.countByKeyword(keyword);
 
+        java.util.Set<UUID> subscribedInterestIds = (userId != null)
+                ? subscriptionRepository.findAllByUserId(userId).stream()
+                        .map(sub -> sub.getInterest().getId())
+                        .collect(java.util.stream.Collectors.toSet())
+                : java.util.Collections.emptySet();
+
         return CursorPageResponse.of(
-                interests.stream().map(InterestResponse::from).toList(),
+                interests.stream()
+                        .map(interest -> InterestResponse.from(interest, subscribedInterestIds.contains(interest.getId())))
+                        .toList(),
                 nextCursor,
                 newNextAfter,
                 size,
@@ -95,7 +109,7 @@ public class InterestService {
         // Get interests subscribed to by a specific user (dashboard / my page)
     public Page<InterestResponse> findSubscribedInterests(UUID userId, Pageable pageable) {
         return interestRepository.findSubscribedInterestsByUserId(userId, pageable)
-                .map(InterestResponse::from);
+                .map(interest -> InterestResponse.from(interest, true));
     }
 
     // Update interest name and keywords
@@ -106,18 +120,32 @@ public class InterestService {
 
         interest.rename(request.getName());  // updateName() → rename()
 
-        return InterestResponse.from(interest);
+        boolean isSubscribed = (userId != null) && subscriptionRepository.existsByUserIdAndInterestId(userId, interestId);
+        return InterestResponse.from(interest, isSubscribed);
     }
 
-    // Subscribe to an interest
     @Transactional
     public InterestResponse subscribe(UUID interestId, UUID userId) {
         Interest interest = interestRepository.findById(interestId)
                 .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
 
-        interest.increaseSubscriberCount();  // incrementSubscriberCount() → increaseSubscriberCount()
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(ErrorCode.USER_NOT_FOUND));
 
-        return InterestResponse.from(interest);
+        if (subscriptionRepository.existsByUserAndInterest(user, interest)) {
+            throw new BaseException(ErrorCode.ALREADY_SUBSCRIBED);
+        }
+
+        Subscription subscription = Subscription.builder()
+                .user(user)
+                .interest(interest)
+                .build();
+
+        subscriptionRepository.save(subscription);
+
+        interest.increaseSubscriberCount();
+
+        return InterestResponse.from(interest, true);
     }
 
 

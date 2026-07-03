@@ -1,6 +1,8 @@
 package com.codeit.server.interest.repository;
 
+import com.codeit.server.interest.entity.Interest;
 import com.codeit.server.interest.entity.Subscription;
+import com.codeit.server.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +22,8 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
     // Retrieve the list of subscriptions for a specific user (my page)
     Page<Subscription> findByUserId(UUID userId, Pageable pageable);
 
+    List<Subscription> findAllByUserId(UUID userId);
+
     // Retrieve the list of users subscribed to a specific interest (e.g. for notification targeting)
     List<Subscription> findByInterestId(UUID interestId);
 
@@ -31,4 +35,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
 
     // Count subscribers of a specific interest (used to sync/verify subscriberCount)
     long countByInterestId(UUID interestId);
+
+    boolean existsByUserAndInterest(User user, Interest interest);
+
 }
