@@ -1,9 +1,6 @@
 package com.codeit.server.article.controller;
 
-import com.codeit.server.article.dto.ArticleDto;
-import com.codeit.server.article.dto.ArticleSearchRequest;
-import com.codeit.server.article.dto.ArticleViewDto;
-import com.codeit.server.article.dto.CursorPageResponseArticle;
+import com.codeit.server.article.dto.*;
 import com.codeit.server.article.service.ArticleService;
 import java.time.Instant;
 import java.util.List;
@@ -72,12 +69,12 @@ public class ArticleController {
     }
 
     @GetMapping("/restore")
-    public ResponseEntity<Void> restoreArticles(
+    public ResponseEntity<ArticleRestoreResultDto> restoreArticles(
             @RequestParam String from,
             @RequestParam String to
     ) {
-        // TODO: Article restore service 구현 후 연결
-        return ResponseEntity.noContent().build();
+        ArticleRestoreResultDto response = articleService.restoreArticles(from, to);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{articleId}/hard")
