@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2                   # AWS 리전 (서울: ap-northeast-2)
-  ECR_REPOSITORY: monew-backend                # AWS ECR 리포지토리 이름
+  ECR_REPOSITORY: monew/backend                # AWS ECR 리포지토리 이름
   ECS_SERVICE: monew-backend-service           # AWS ECS 서비스 이름
   ECS_CLUSTER: monew-cluster                   # AWS ECS 클러스터 이름
   ECS_TASK_DEFINITION: .aws/task-definition.json # ECS 태스크 정의 파일 경로
