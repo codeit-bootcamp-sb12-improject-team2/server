@@ -49,7 +49,7 @@ public class InterestController {
     public ResponseEntity<InterestResponse> update( // 태성
             @PathVariable UUID interestId,
             @RequestBody @Valid InterestUpdateRequest request,
-            @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
+            @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID userId
     ) {
         InterestResponse response = interestService.update(interestId, request, userId);
         return ResponseEntity.ok(response);

@@ -112,15 +112,32 @@ public class InterestService {
                 .map(interest -> InterestResponse.from(interest, true));
     }
 
-    // Update interest name and keywords
     @Transactional
     public InterestResponse update(UUID interestId, InterestUpdateRequest request, UUID userId) {
         Interest interest = interestRepository.findById(interestId)
                 .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
 
-        interest.rename(request.getName());  // updateName() → rename()
+        if (request.getName() != null && !request.getName().isBlank()) {
+            interest.rename(request.getName());
+        }
 
-        boolean isSubscribed = (userId != null) && subscriptionRepository.existsByUserIdAndInterestId(userId, interestId);
+        if (request.getKeywords() != null) {
+            interest.getKeywords().clear();
+
+            interestRepository.flush();
+
+            for (String keyword : request.getKeywords()) {
+                InterestKeyword interestKeyword = InterestKeyword.builder()
+                        .keyword(keyword)
+                        .build();
+
+                interest.addKeyword(interestKeyword);
+            }
+        }
+
+        boolean isSubscribed =
+                (userId != null) && subscriptionRepository.existsByUserIdAndInterestId(userId, interestId);
+
         return InterestResponse.from(interest, isSubscribed);
     }
 
