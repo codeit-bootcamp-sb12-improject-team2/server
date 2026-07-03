@@ -7,6 +7,7 @@ import com.codeit.server.article.entity.QArticleInterest;
 import com.codeit.server.article.entity.QArticleView;
 import com.codeit.server.batch.job.articlebackup.dto.ArticleBackupDto;
 import com.codeit.server.comment.entity.QComment;
+import com.codeit.server.rank.dto.ArticleRankingDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;

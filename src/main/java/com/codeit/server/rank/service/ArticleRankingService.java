@@ -1,6 +1,6 @@
-package com.codeit.server.article.service;
+package com.codeit.server.rank.service;
 
-import com.codeit.server.article.dto.ArticleRankingResponse;
+import com.codeit.server.rank.dto.ArticleRankingResponse;
 import java.time.LocalDate;
 
 public interface ArticleRankingService {

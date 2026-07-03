@@ -1,4 +1,4 @@
-package com.codeit.server.article.dto;
+package com.codeit.server.rank.dto;
 
 import java.time.LocalDate;
 import java.util.List;
