@@ -12,8 +12,10 @@ public enum ErrorCode {
 
   USER_NOT_FOUND("존재하지 않는 사용자입니다."),
   USER_ALREADY_EXISTS("이미 가입된 사용자 아이디(이메일)입니다."),
+  USER_NICKNAME_ALREADY_EXISTS("이미 사용 중인 닉네임입니다."),
   INVALID_CREDENTIALS("아이디 또는 비밀번호가 올바르지 않습니다."),
   USER_ALREADY_DELETED("이미 논리 삭제(탈퇴)된 사용자입니다."),
+  USER_ACCESS_DENIED("해당 사용자에 대한 접근 권한이 없습니다."),
 
   // 2. Article 도메인 (뉴스 기사 관리)
 
@@ -22,6 +24,7 @@ public enum ErrorCode {
   ARTICLE_NOT_DELETED("삭제되지 않은 기사는 복구할 수 없습니다."),
   ARTICLE_VIEW_RECORD_FAILED("기사 조회수 등록에 실패했습니다."),
 
+  INVALID_RANKING_TYPE("지원하지 않는 랭킹 타입입니다."),
 
   // 3. Notification 도메인 (알림 관리)
 
@@ -36,6 +39,9 @@ public enum ErrorCode {
   ALREADY_SUBSCRIBED("이미 구독 중인 관심사입니다."),
   SUBSCRIPTION_NOT_FOUND("구독 내역을 찾을 수 없습니다."),
 
+  // 4-1. Interest Keyword 도메인 ( 관심사 키워드 관리)
+
+  DUPLICATE_KEYWORD( "이미 등록된 키워드입니다."),
 
   // 5. Comment 도메인 (댓글 / 좋아요 관리)
 
@@ -44,6 +50,9 @@ public enum ErrorCode {
   COMMENT_ALREADY_DELETED("이미 삭제된 댓글입니다."),
   ALREADY_LIKED_COMMENT("이미 좋아요를 누른 댓글입니다."),
   COMMENT_LIKE_NOT_FOUND("좋아요 내역이 존재하지 않아 취소할 수 없습니다."),
+
+  COMMENT_CONTENT_BLOCKED("부적절한 표현이 포함되어 댓글을 등록할 수 없습니다."),
+  COMMENT_MODERATION_FAILED("댓글 필터링 서비스 호출에 실패했습니다."),
 
 
   // 6. Common & Global (기본 예외 공통)

@@ -32,8 +32,23 @@ out/
 # yaml
 *.yml
 *.yaml
+!src/main/resources/application.yaml
+!src/main/resources/application-dev.yaml
+!src/main/resources/application-prod.yaml
+
+
+# GitHub Actions workflows
+!.github/workflows/*.yml
+
 
 # logs
 *.log
 logs/
 **/logs/**
+
+# resources
+/resources/
+src/main/resources/*.zip
+src/main/resources/static/
+src/main/resources/project-monew-fe-v2-2.0.2/
+
