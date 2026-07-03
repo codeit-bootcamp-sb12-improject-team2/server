@@ -38,4 +38,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
 
     boolean existsByUserAndInterest(User user, Interest interest);
 
+    Optional<Subscription> findByUserAndInterest(User user, Interest interest);
+
 }

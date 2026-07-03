@@ -149,13 +149,21 @@ public class InterestService {
     }
 
 
-    // Unsubscribe from an interest
     @Transactional
     public void unsubscribe(UUID interestId, UUID userId) {
         Interest interest = interestRepository.findById(interestId)
                 .orElseThrow(() -> new BaseException(ErrorCode.INTEREST_NOT_FOUND));
 
-        interest.decreaseSubscriberCount();  // decrementSubscriberCount() → decreaseSubscriberCount()
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(ErrorCode.USER_NOT_FOUND));
+
+        Subscription subscription = subscriptionRepository
+                .findByUserAndInterest(user, interest)
+                .orElseThrow(() -> new BaseException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
+
+        subscriptionRepository.delete(subscription);
+
+        interest.decreaseSubscriberCount();
     }
 
     // Hard delete an interest
