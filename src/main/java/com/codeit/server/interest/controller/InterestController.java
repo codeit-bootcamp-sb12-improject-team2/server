@@ -22,7 +22,7 @@ public class InterestController {
 
     // GET /api/interests - search with cursor-based pagination
     @GetMapping
-    public ResponseEntity<CursorPageResponse<InterestResponse>> searchInterests( // 태성
+    public ResponseEntity<CursorPageResponse<InterestResponse>> searchInterests(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String orderBy,
             @RequestParam(required = false) String cursor,
@@ -46,7 +46,7 @@ public class InterestController {
 
     // PATCH /api/interests/{interestId} - update interest name/keywords
     @PatchMapping("/{interestId}")
-    public ResponseEntity<InterestResponse> update( // 태성
+    public ResponseEntity<InterestResponse> update(
             @PathVariable UUID interestId,
             @RequestBody @Valid InterestUpdateRequest request,
             @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID userId
@@ -57,7 +57,7 @@ public class InterestController {
 
     // DELETE /api/interests/{interestId} - hard delete an interest
     @DeleteMapping("/{interestId}")
-    public ResponseEntity<Void> hardDelete( // 태성
+    public ResponseEntity<Void> hardDelete(
             @PathVariable UUID interestId,
             @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID userId
     ) {
