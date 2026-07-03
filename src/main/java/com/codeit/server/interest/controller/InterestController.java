@@ -25,13 +25,14 @@ public class InterestController {
     public ResponseEntity<CursorPageResponse<InterestResponse>> searchInterests(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String orderBy,
+            @RequestParam(required = false) String direction,
             @RequestParam(required = false) String cursor,
-            @RequestParam(required = false) String nextAfter,
+            @RequestParam(required = false) String after,
             @RequestParam(defaultValue = "10") int size,
             @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID userId
     ) {
         CursorPageResponse<InterestResponse> response =
-                interestService.search(keyword, orderBy, cursor, nextAfter, size, userId);
+                interestService.search(keyword, orderBy, direction, cursor, after, size, userId);
         return ResponseEntity.ok(response);
     }
 
@@ -49,7 +50,7 @@ public class InterestController {
     public ResponseEntity<InterestResponse> update(
             @PathVariable UUID interestId,
             @RequestBody @Valid InterestUpdateRequest request,
-            @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
+            @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID userId
     ) {
         InterestResponse response = interestService.update(interestId, request, userId);
         return ResponseEntity.ok(response);
@@ -59,13 +60,12 @@ public class InterestController {
     @DeleteMapping("/{interestId}")
     public ResponseEntity<Void> hardDelete(
             @PathVariable UUID interestId,
-            @RequestHeader(value = "Monew-Request-User-ID", required = true) UUID userId
+            @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID userId
     ) {
         interestService.hardDelete(interestId, userId);
         return ResponseEntity.noContent().build();
     }
 
-    // POST /api/interests/{interestId}/subscriptions - subscribe to an interest
     @PostMapping("/{interestId}/subscriptions")
     public ResponseEntity<InterestResponse> subscribe(
             @PathVariable UUID interestId,
@@ -75,7 +75,6 @@ public class InterestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // DELETE /api/interests/{interestId}/subscriptions - unsubscribe from an interest
     @DeleteMapping("/{interestId}/subscriptions")
     public ResponseEntity<Void> unsubscribe(
             @PathVariable UUID interestId,
