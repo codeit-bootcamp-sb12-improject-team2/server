@@ -37,9 +37,7 @@ public class InterestService {
     // Create a new interest along with its keywords
     @Transactional
     public InterestResponse create(InterestCreateRequest request) {
-        if (interestRepository.existsByName(request.getName())) {
-            throw new BaseException(ErrorCode.INTEREST_ALREADY_EXISTS);
-        }
+        validateSimilarInterestName(request.getName());
 
         Interest interest = Interest.builder()
                 .name(request.getName())
@@ -200,4 +198,80 @@ public class InterestService {
             default -> interest.getName();  // NAME or default
         };
     }
+
+    private void validateSimilarInterestName(String newName) {
+        List<Interest> interests = interestRepository.findAll();
+
+        boolean existsSimilarName = interests.stream()
+                .anyMatch(interest -> isSimilarName(interest.getName(), newName));
+
+        if (existsSimilarName) {
+            throw new BaseException(ErrorCode.INTEREST_SIMILAR_NAME_EXISTS);
+        }
+    }
+
+    private boolean isSimilarName(String existingName, String newName) { // 동일 관심사 및 유사도 80퍼
+        String a = normalize(existingName);
+        String b = normalize(newName);
+
+        if (a.equals(b)) {
+            return true;
+        }
+
+        double similarity = calculateSimilarity(a, b);
+
+        if (Math.max(a.length(), b.length()) <= 4) { // 4글자 이하일때는 75퍼
+            return similarity >= 0.75;
+        }
+
+        return similarity >= 0.8;
+    }
+
+    private double calculateSimilarity(String a, String b) { // 레벤슈타인 이용한 유사도 측정
+        int distance = levenshteinDistance(a, b);
+        int maxLength = Math.max(a.length(), b.length());
+
+        if (maxLength == 0) {
+            return 1.0;
+        }
+
+        return 1.0 - ((double) distance / maxLength);
+    }
+
+    private String normalize(String value) { // 문자열 정규화
+        if (value == null) {
+            return "";
+        }
+
+        return value
+                .trim()
+                .replaceAll("\\s+", "")
+                .toLowerCase();
+    }
+
+    private int levenshteinDistance(String a, String b) { // 레벤슈타인 거리 -> 유사도 측정
+        int[][] dp = new int[a.length() + 1][b.length() + 1];
+
+        for (int i = 0; i <= a.length(); i++) {
+            dp[i][0] = i;
+        }
+
+        for (int j = 0; j <= b.length(); j++) {
+            dp[0][j] = j;
+        }
+
+        for (int i = 1; i <= a.length(); i++) {
+            for (int j = 1; j <= b.length(); j++) {
+                int cost = a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1;
+
+                dp[i][j] = Math.min(
+                        Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1),
+                        dp[i - 1][j - 1] + cost
+                );
+            }
+        }
+
+        return dp[a.length()][b.length()];
+    }
+
 }
