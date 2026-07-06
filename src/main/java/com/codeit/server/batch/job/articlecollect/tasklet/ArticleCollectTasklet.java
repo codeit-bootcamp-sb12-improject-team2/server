@@ -67,7 +67,7 @@ public class ArticleCollectTasklet implements Tasklet {
 
         for (Map.Entry<String, List<UUID>> entry : keywordInterestIdsMap.entrySet()) {
             String keyword = entry.getKey();
-            log.debug("Collecting keyword={}", keyword);
+//            log.debug("Collecting keyword={}", keyword);
 
             List<UUID> interestIds = entry.getValue();
 
@@ -121,9 +121,9 @@ public class ArticleCollectTasklet implements Tasklet {
     private Article saveArticleIfNotExists(CollectedArticle collectedArticle) {
         return articleRepository.findBySourceUrl(collectedArticle.getSourceUrl())
                 .orElseGet(() ->{
-                    log.debug("New article saved. source={}, title={}",
-                            collectedArticle.getSource(),
-                            collectedArticle.getTitle());
+//                    log.debug("New article saved. source={}, title={}",
+//                            collectedArticle.getSource(),
+//                            collectedArticle.getTitle());
 
                     return articleRepository.save(collectedArticle.toEntity());
                 });
