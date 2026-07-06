@@ -20,8 +20,13 @@ public class InterestResponse {
     private List<String> keywords;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean subscribedByMe;
 
     public static InterestResponse from(Interest interest) {
+        return from(interest, false);
+    }
+
+    public static InterestResponse from(Interest interest, boolean subscribedByMe) {
         return InterestResponse.builder()
                 .id(interest.getId())
                 .name(interest.getName())
@@ -31,6 +36,7 @@ public class InterestResponse {
                         .toList())
                 .createdAt(LocalDateTime.ofInstant(interest.getCreatedAt(), ZoneOffset.UTC))
                 .updatedAt(LocalDateTime.ofInstant(interest.getUpdatedAt(), ZoneOffset.UTC))
+                .subscribedByMe(subscribedByMe)
                 .build();
     }
 }

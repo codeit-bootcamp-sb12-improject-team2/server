@@ -1,6 +1,8 @@
 package com.codeit.server.interest.repository;
 
+import com.codeit.server.interest.entity.Interest;
 import com.codeit.server.interest.entity.Subscription;
+import com.codeit.server.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,21 +16,10 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
     // Check whether a subscription exists (used when toggling subscribe/unsubscribe)
     boolean existsByUserIdAndInterestId(UUID userId, UUID interestId);
 
-    // Retrieve a single subscription (used when unsubscribing)
-    Optional<Subscription> findByUserIdAndInterestId(UUID userId, UUID interestId);
+    List<Subscription> findAllByUserId(UUID userId);
 
-    // Retrieve the list of subscriptions for a specific user (my page)
-    Page<Subscription> findByUserId(UUID userId, Pageable pageable);
+    boolean existsByUserAndInterest(User user, Interest interest);
 
-    // Retrieve the list of users subscribed to a specific interest (e.g. for notification targeting)
-    List<Subscription> findByInterestId(UUID interestId);
+    Optional<Subscription> findByUserAndInterest(User user, Interest interest);
 
-    // Bulk delete subscriptions when an interest is deleted
-    void deleteByInterestId(UUID interestId);
-
-    // Bulk delete subscriptions when a user is deactivated/deleted
-    void deleteByUserId(UUID userId);
-
-    // Count subscribers of a specific interest (used to sync/verify subscriberCount)
-    long countByInterestId(UUID interestId);
 }
