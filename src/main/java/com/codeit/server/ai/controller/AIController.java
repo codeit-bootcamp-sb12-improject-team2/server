@@ -16,7 +16,7 @@ public class AIController {
 
   private final AIService aiService;
 
-  @GetMapping("/summary")
+  @GetMapping(value = "/summary")
   public NewsSummaryResponseDto summarize(
       @RequestParam UUID articleId
   ) {
