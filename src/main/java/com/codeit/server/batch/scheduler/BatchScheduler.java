@@ -34,6 +34,9 @@ public class BatchScheduler {
     @Qualifier("rankJob")
     private final Job rankJob;
 
+    @Qualifier("logBackupJob")
+    private final Job logBackupJob;
+
     @Scheduled(cron = "${spring.batch.scheduler.cron.delete-old-notifications:0 0 0 * * ?}")
     public void runDeleteOldNotificationsJob() {
         log.info("Scheduled task triggered: runDeleteOldNotificationsJob");
@@ -113,6 +116,23 @@ public class BatchScheduler {
             log.info("Scheduled rankJob completed successfully.");
         } catch (Exception e) {
             log.error("Failed to execute scheduled rankJob", e);
+        }
+    }
+
+    @Scheduled(cron = "${spring.batch.scheduler.cron.backup-log:0 10 0 * * *}")
+    public void runLogBackupJob() {
+        log.info("Scheduled task triggered: runLogBackupJob");
+
+        try {
+            JobParameters jobParameters = new JobParametersBuilder()
+                    .addLong("time", System.currentTimeMillis())
+                    .toJobParameters();
+
+            jobLauncher.run(logBackupJob, jobParameters);
+
+            log.info("Scheduled logBackupJob completed successfully.");
+        } catch (Exception e) {
+            log.error("Failed to execute scheduled logBackupJob", e);
         }
     }
 }
