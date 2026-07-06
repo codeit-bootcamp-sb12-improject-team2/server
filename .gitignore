@@ -43,7 +43,7 @@ out/
 
 # logs
 *.log
-logs/
+logs/11
 **/logs/**
 
 # resources
