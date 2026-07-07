@@ -100,10 +100,14 @@ public class ArticleServiceImpl implements ArticleService{
         articleRepository.delete(article);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<String> findSource() {
-        return articleRepository.findSource();
+        return List.of(
+                "NAVER",
+                "HANKYUNG",
+                "CHOSUN",
+                "YEONHAP"
+        );
     }
 
     @Override
