@@ -5,6 +5,8 @@ import com.codeit.server.article.entity.Article;
 import com.codeit.server.article.entity.ArticleView;
 import com.codeit.server.article.repository.*;
 import com.codeit.server.batch.job.articlebackup.dto.ArticleBackupDto;
+import com.codeit.server.global.exception.BaseException;
+import com.codeit.server.global.exception.ErrorCode;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +48,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     public ArticleViewDto createArticleView(UUID articleId, UUID requestUserId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(); //TODO : 예외 추후 글로벌 따라 변경 필요
+                .orElseThrow(() -> new BaseException(ErrorCode.ARTICLE_NOT_FOUND));
 
         ArticleView articleView = articleViewRepository
                 .findByArticleIdAndUserId(articleId, requestUserId)
@@ -74,13 +76,18 @@ public class ArticleServiceImpl implements ArticleService{
     @Transactional(readOnly = true)
     @Override
     public ArticleDto findArticle(UUID articleId, UUID requestUserId) {
-        return articleRepository.findArticle(articleId, requestUserId).orElseThrow(); //TODO : 예외 추후 글로벌 따라 변경 필요;
+        return articleRepository.findArticle(articleId, requestUserId)
+                .orElseThrow(() -> new BaseException(ErrorCode.ARTICLE_NOT_FOUND));
     }
 
     @Transactional
     @Override
     public void deleteArticle(UUID articleId) {
-        Article article = articleRepository.findById(articleId).orElseThrow(); //TODO : 예외 추후 글로벌 따라 변경 필요
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BaseException(ErrorCode.ARTICLE_NOT_FOUND));
+        if (article.isDeleted()) {
+            throw new BaseException(ErrorCode.ARTICLE_NOT_FOUND);
+        }
         article.delete();
 
     }
@@ -88,14 +95,19 @@ public class ArticleServiceImpl implements ArticleService{
     @Transactional
     @Override
     public void hardDeleteArticle(UUID articleId) {
-        Article article = articleRepository.findById(articleId).orElseThrow(); //TODO : 예외 추후 글로벌 따라 변경 필요
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new BaseException(ErrorCode.ARTICLE_NOT_FOUND));
         articleRepository.delete(article);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<String> findSource() {
-        return articleRepository.findSource();
+        return List.of(
+                "NAVER",
+                "HANKYUNG",
+                "CHOSUN",
+                "YEONHAP"
+        );
     }
 
     @Override
