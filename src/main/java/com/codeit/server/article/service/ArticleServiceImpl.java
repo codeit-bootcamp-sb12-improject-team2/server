@@ -106,7 +106,7 @@ public class ArticleServiceImpl implements ArticleService{
                 "NAVER",
                 "HANKYUNG",
                 "CHOSUN",
-                "YEONHAP"
+                "YONHAP"
         );
     }
 
