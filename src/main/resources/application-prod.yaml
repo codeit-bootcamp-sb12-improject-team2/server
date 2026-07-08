@@ -28,7 +28,6 @@ spring:
       database: monew
       uuid-representation: standard
 
-
 logging:
   level:
     root: INFO
