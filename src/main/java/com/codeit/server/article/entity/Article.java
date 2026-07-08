@@ -19,10 +19,10 @@ public class Article extends BaseUpdatableEntity {
     @Column(nullable = false, length = 30)
     private String source;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true, columnDefinition = "TEXT")
     private String sourceUrl;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String title;
 
     @Column(nullable = false)
