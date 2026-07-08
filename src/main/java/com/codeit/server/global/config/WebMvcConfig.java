@@ -25,7 +25,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://d2j0rmphygdjau.cloudfront.net", "http://localhost:5173")
+                .allowedOrigins(
+                        "https://monew.site",
+                        "https://www.monew.site",
+                        "https://d2j0rmphygdjau.cloudfront.net",
+                        "http://localhost:5173"
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
