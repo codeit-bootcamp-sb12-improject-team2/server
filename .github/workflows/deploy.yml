@@ -90,7 +90,7 @@ jobs:
           CLUSTER_NAME: ${{ env.ECS_CLUSTER }}
           SERVICE_NAME: ${{ env.ECS_SERVICE }}
           HOSTED_ZONE_ID: ${{ secrets.ROUTE53_HOSTED_ZONE_ID }} # 깃허브 Repository Secret에 등록한 호스팅 영역 ID 사용
-          DOMAIN_NAME: "monew.site"                              # 도메인 이름
+          DOMAIN_NAME: "api.monew.site"                          # 백엔드 API 서브도메인 이름
         run: |
           echo "1. 새롭게 실행된 ECS Task ARN 조회..."
           TASK_ARN=$(aws ecs list-tasks --cluster $CLUSTER_NAME --service-name $SERVICE_NAME --query "taskArns[0]" --output text)
