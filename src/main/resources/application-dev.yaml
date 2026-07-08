@@ -25,7 +25,7 @@ spring:
   data:
     mongodb:
       uri: ${MONGO_URI}
-      database:
+      database: monew
       uuid-representation: standard
 
 logging:
