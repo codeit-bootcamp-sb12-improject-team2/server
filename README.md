@@ -120,8 +120,15 @@ AI 기능 요약 기능을 통해 긴 기사의 핵심 내용을 빠르게 확�
 - 내 정보 관리
 - 기사 조회 기록
 - 관심사 관리
+---
+## 🖥️ 추가기능 
+  - AI 뉴스 요약 및 키워드 자동 추출
+  - 뉴스 랭킹 시스템
+  - 이중 하이브리드 댓글 모더레이션 (필터링) 
+    
 
 ---
+
 
 # 📂 프로젝트 구조
 
@@ -129,57 +136,224 @@ AI 기능 요약 기능을 통해 긴 기사의 핵심 내용을 빠르게 확�
 <summary>접기 / 펼치기</summary>
 
 ```bash
-src
-┗ main
- ┣ java
- ┃ ┗ com.codeit.server
- ┃   ┣ article
- ┃   ┃ ┣ controller
- ┃   ┃ ┣ dto
- ┃   ┃ ┣ entity
- ┃   ┃ ┣ repository
- ┃   ┃ ┗ service
- ┃   ┣ comment
- ┃   ┃ ┣ controller
- ┃   ┃ ┣ dto
- ┃   ┃ ┣ entity
- ┃   ┃ ┣ repository
- ┃   ┃ ┗ service
- ┃   ┣ interest
- ┃   ┃ ┣ controller
- ┃   ┃ ┣ dto
- ┃   ┃ ┣ entity
- ┃   ┃ ┣ repository
- ┃   ┃ ┗ service
- ┃   ┣ notification
- ┃   ┃ ┣ controller
- ┃   ┃ ┣ dto
- ┃   ┃ ┣ entity
- ┃   ┃ ┣ repository
- ┃   ┃ ┗ service
- ┃   ┣ subscription
- ┃   ┃ ┣ controller
- ┃   ┃ ┣ dto
- ┃   ┃ ┣ entity
- ┃   ┃ ┣ repository
- ┃   ┃ ┗ service
- ┃   ┣ user
- ┃   ┃ ┣ controller
- ┃   ┃ ┣ dto
- ┃   ┃ ┣ entity
- ┃   ┃ ┣ repository
- ┃   ┃ ┗ service
- ┃   ┣ global
- ┃   ┃ ┣ config
- ┃   ┃ ┣ exception
- ┃   ┃ ┣ security
- ┃   ┃ ┗ util
- ┃   ┗ batch
- ┃     ┣ config
- ┃     ┣ job
- ┃     ┣ scheduler
- ┃     ┗ tasklet
- ┗ resources
+── ServerApplication.java
+├── ai
+│   ├── client
+│   │   ├── GeminiClient.java
+│   │   ├── GeminiConfig.java
+│   │   └── NewsCrawler.java
+│   ├── controller
+│   │   └── AIController.java
+│   ├── dto
+│   │   ├── NewsSummaryResponseDto.java
+│   │   └── RssItem.java
+│   └── service
+│       ├── AIService.java
+│       └── AIServiceImpl.java
+├── article
+│   ├── controller
+│   │   └── ArticleController.java
+│   ├── dto
+│   │   ├── ArticleDto.java
+│   │   ├── ArticleQueryDto.java
+│   │   ├── ArticleRestoreResultDto.java
+│   │   ├── ArticleSearchRequest.java
+│   │   ├── ArticleViewDto.java
+│   │   └── CursorPageResponseArticle.java
+│   ├── entity
+│   │   ├── Article.java
+│   │   ├── ArticleInterest.java
+│   │   └── ArticleView.java
+│   ├── repository
+│   │   ├── ArticleInterestRepository.java
+│   │   ├── ArticleRepository.java
+│   │   ├── ArticleRepositoryCustom.java
+│   │   ├── ArticleRepositoryImpl.java
+│   │   └── ArticleViewRepository.java
+│   └── service
+│       ├── ArticleService.java
+│       └── ArticleServiceImpl.java
+├── batch
+│   ├── job
+│   │   ├── articlebackup
+│   │   │   ├── ArticleBackupJobConfig.java
+│   │   │   ├── dto
+│   │   │   │   └── ArticleBackupDto.java
+│   │   │   └── tasklet
+│   │   │       └── ArticleBackupTasklet.java
+│   │   ├── articlecollect
+│   │   │   ├── ArticleCollectJobConfig.java
+│   │   │   ├── ArticleCollectRestClientConfig.java
+│   │   │   ├── collector
+│   │   │   │   ├── ArticleCollector.java
+│   │   │   │   ├── ChosunArticleCollector.java
+│   │   │   │   ├── HankyungArticleCollector.java
+│   │   │   │   ├── NaverArticleCollector.java
+│   │   │   │   ├── RssArticleCollector.java
+│   │   │   │   └── YonhapArticleCollector.java
+│   │   │   ├── dto
+│   │   │   │   ├── CollectedArticle.java
+│   │   │   │   ├── NaverArticleItem.java
+│   │   │   │   ├── NaverArticleResponse.java
+│   │   │   │   ├── RssChannel.java
+│   │   │   │   ├── RssItem.java
+│   │   │   │   └── RssResponse.java
+│   │   │   └── tasklet
+│   │   │       └── ArticleCollectTasklet.java
+│   │   ├── logbackup
+│   │   │   ├── LogBackupJobConfig.java
+│   │   │   └── tasklet
+│   │   │       └── LogBackupTasklet.java
+│   │   ├── newsbackup
+│   │   │   └── tasklet
+│   │   ├── notification
+│   │   │   ├── DeleteOldNotificationsJobConfig.java
+│   │   │   └── tasklet
+│   │   │       └── DeleteOldNotificationsTasklet.java
+│   │   ├── rank
+│   │   │   ├── RankJobConfig.java
+│   │   │   └── tasklet
+│   │   │       ├── RankJobTasklet.java
+│   │   │       └── example.java
+│   │   └── userdelete
+│   │       ├── UserDeleteJobConfig.java
+│   │       └── tasklet
+│   │           └── UserDeleteTasklet.java
+│   ├── monitoring
+│   │   ├── BatchMetrics.java
+│   │   └── BatchMetricsJobExecutionListener.java
+│   └── scheduler
+│       └── BatchScheduler.java
+├── comment
+│   ├── controller
+│   │   └── CommentController.java
+│   ├── dto
+│   │   ├── CommentCreateRequest.java
+│   │   ├── CommentDto.java
+│   │   ├── CommentLikeDto.java
+│   │   ├── CommentUpdateRequest.java
+│   │   └── CursorPageResponseCommentDto.java
+│   ├── entity
+│   │   ├── Comment.java
+│   │   └── CommentLike.java
+│   ├── repository
+│   │   ├── CommentLikeRepository.java
+│   │   ├── CommentRepository.java
+│   │   ├── CommentRepositoryCustom.java
+│   │   └── CommentRepositoryImpl.java
+│   └── service
+│       ├── CommentModerationClient.java
+│       ├── CommentModerationService.java
+│       └── CommentService.java
+├── global
+│   ├── common
+│   │   ├── BaseEntity.java
+│   │   ├── BaseUpdatableEntity.java
+│   │   └── MongoBaseUpdatableEntity.java
+│   ├── config
+│   │   ├── AsyncConfig.java
+│   │   ├── HttpClientConfig.java
+│   │   ├── JpaAuditingConfig.java
+│   │   ├── MDCLoggingInterceptor.java
+│   │   ├── MongoAuditingConfig.java
+│   │   ├── QuerydslConfig.java
+│   │   ├── S3Config.java
+│   │   ├── SchedulerConfig.java
+│   │   └── WebMvcConfig.java
+│   ├── exception
+│   │   ├── BaseException.java
+│   │   ├── ErrorCode.java
+│   │   ├── ErrorResponse.java
+│   │   └── GlobalExceptionHandler.java
+│   └── log
+│       └── LoggingAspect.java
+├── interest
+│   ├── controller
+│   │   └── InterestController.java
+│   ├── dto
+│   │   ├── CursorPageResponse.java
+│   │   ├── InterestCreateRequest.java
+│   │   ├── InterestKeywordResponse.java
+│   │   ├── InterestResponse.java
+│   │   ├── InterestUpdateRequest.java
+│   │   ├── SubscriptionRequest.java
+│   │   └── SubscriptionResponse.java
+│   ├── entity
+│   │   ├── Interest.java
+│   │   ├── InterestKeyword.java
+│   │   └── Subscription.java
+│   ├── repository
+│   │   ├── InterestKeywordRepository.java
+│   │   ├── InterestRepository.java
+│   │   ├── InterestRepositoryCustom.java
+│   │   ├── InterestRepositoryImpl.java
+│   │   └── SubscriptionRepository.java
+│   └── service
+│       └── InterestService.java
+├── notification
+│   ├── controller
+│   │   └── NotificationController.java
+│   ├── dto
+│   │   ├── CursorPageResponseNotificationDto.java
+│   │   └── NotificationDto.java
+│   ├── entity
+│   │   └── Notification.java
+│   ├── event
+│   │   └── NotificationEvent.java
+│   ├── listener
+│   │   └── NotificationEventListener.java
+│   ├── repository
+│   │   ├── NotificationQueryRepository.java
+│   │   ├── NotificationQueryRepositoryImpl.java
+│   │   └── NotificationRepository.java
+│   └── service
+│       ├── NotificationService.java
+│       └── NotificationServiceImpl.java
+├── rank
+│   ├── controller
+│   │   └── ArticleRankingController.java
+│   ├── dto
+│   │   ├── ArticleRankingDto.java
+│   │   └── ArticleRankingResponse.java
+│   ├── entity
+│   │   └── ArticleRanking.java
+│   ├── repository
+│   │   └── ArticleRankingRepository.java
+│   └── service
+│       ├── ArticleRankingService.java
+│       └── ArticleRankingServiceImpl.java
+├── user
+│   ├── config
+│   │   └── UserConfig.java
+│   ├── controller
+│   │   └── UserController.java
+│   ├── dto
+│   │   ├── UserDto.java
+│   │   ├── UserLoginRequest.java
+│   │   ├── UserRegisterRequest.java
+│   │   └── UserUpdateRequest.java
+│   ├── entity
+│   │   └── User.java
+│   ├── repository
+│   │   └── UserRepository.java
+│   └── service
+│       ├── UserService.java
+│       └── UserServiceImpl.java
+└── useractivity
+    ├── controller
+    │   └── UserActivityController.java
+    ├── dto
+    │   ├── ArticleActivityDto.java
+    │   ├── CommentLikeUserActivityDto.java
+    │   ├── CommentUserActivityDto.java
+    │   ├── SubscriptionActivityDto.java
+    │   └── UserActivityDto.java
+    ├── repository
+    │   ├── UserActivityQueryRepository.java
+    │   └── UserActivityQueryRepositoryImpl.java
+    └── service
+        ├── UserActivityService.java
+        └── UserActivityServiceImpl.java
 ```
 
 </details>
