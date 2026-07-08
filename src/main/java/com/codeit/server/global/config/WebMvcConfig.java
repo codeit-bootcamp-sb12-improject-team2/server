@@ -21,4 +21,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(mdcLoggingInterceptor())
                 .addPathPatterns("/**"); // 모든 경로에 적용
     }
+
+    @Override
+    public void addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("https://d2j0rmphygdjau.cloudfront.net", "http://localhost:5173")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+    }
 }
