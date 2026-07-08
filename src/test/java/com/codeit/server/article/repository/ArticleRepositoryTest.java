@@ -27,7 +27,18 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
-@DataJpaTest
+@DataJpaTest(properties = {
+    "spring.datasource.url=${DB_URL}",
+    "spring.datasource.username=${DB_USERNAME}",
+    "spring.datasource.password=${DB_PASSWORD}",
+    "spring.datasource.driver-class-name=org.postgresql.Driver",
+    "spring.jpa.database=postgresql",
+    "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect",
+    "spring.jpa.hibernate.ddl-auto=update",
+    "spring.data.mongodb.uri=${MONGO_URI}",
+    "spring.data.mongodb.database=monew",
+    "spring.data.mongodb.uuid-representation=standard"
+})
 @Import({QuerydslConfig.class, ArticleRepositoryImpl.class, JpaAuditingConfig.class})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ArticleRepositoryTest {
