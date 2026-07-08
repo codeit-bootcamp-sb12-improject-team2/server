@@ -33,4 +33,4 @@ aws:
     article-backup-prefix: article-backups
     log-backup-prefix: logs
   access-key: ${AWS_ACCESS_KEY}
-  secret-key: ${AWS_SECRET_KEY}zqXFtLTXbK
+  secret-key: ${AWS_SECRET_KEY}
