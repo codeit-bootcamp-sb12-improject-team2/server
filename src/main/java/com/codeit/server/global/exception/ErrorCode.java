@@ -36,6 +36,7 @@ public enum ErrorCode {
 
   INTEREST_NOT_FOUND("존재하지 않는 관심사 카테고리입니다."),
   INTEREST_ALREADY_EXISTS("이미 존재하는 관심사 이름입니다."),
+  INTEREST_SIMILAR_NAME_EXISTS("유사한 이름의 관심사가 이미 존재합니다."),
   ALREADY_SUBSCRIBED("이미 구독 중인 관심사입니다."),
   SUBSCRIPTION_NOT_FOUND("구독 내역을 찾을 수 없습니다."),
 
