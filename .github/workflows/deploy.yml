@@ -83,3 +83,54 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
+
+      # 10. ECS Fargate 퍼블릭 IP를 Route 53 A 레코드에 자동 갱신
+      - name: Update Route 53 A record with new ECS task public IP
+        env:
+          CLUSTER_NAME: ${{ env.ECS_CLUSTER }}
+          SERVICE_NAME: ${{ env.ECS_SERVICE }}
+          HOSTED_ZONE_ID: ${{ secrets.ROUTE53_HOSTED_ZONE_ID }} # 깃허브 Repository Secret에 등록한 호스팅 영역 ID 사용
+          DOMAIN_NAME: "monew.site"                              # 도메인 이름
+        run: |
+          echo "1. 새롭게 실행된 ECS Task ARN 조회..."
+          TASK_ARN=$(aws ecs list-tasks --cluster $CLUSTER_NAME --service-name $SERVICE_NAME --query "taskArns[0]" --output text)
+          echo "Task ARN: $TASK_ARN"
+          
+          echo "2. Task에서 네트워크 인터페이스(ENI) ID 추출..."
+          ENI_ID=$(aws ecs describe-tasks --cluster $CLUSTER_NAME --tasks $TASK_ARN --query "tasks[0].attachments[0].details[?name=='networkInterfaceId'].value" --output text)
+          echo "ENI ID: $ENI_ID"
+          
+          echo "3. ENI에서 퍼블릭 IP 조회..."
+          PUBLIC_IP=$(aws ec2 describe-network-interfaces --network-interface-ids $ENI_ID --query "NetworkInterfaces[0].Association.PublicIp" --output text)
+          echo "New Public IP: $PUBLIC_IP"
+          
+          if [ "$PUBLIC_IP" = "None" ] || [ -z "$PUBLIC_IP" ]; then
+            echo "오류: 퍼블릭 IP를 가져오지 못했습니다. Task 상태를 확인해 주세요."
+            exit 1
+          fi
+          
+          echo "4. Route 53 DNS 레코드 업데이트 요청서 작성..."
+          cat <<EOF > route53-update.json
+          {
+            "Comment": "GitHub Actions에서 자동으로 ECS Fargate 새 IP 갱신",
+            "Changes": [
+              {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                  "Name": "$DOMAIN_NAME",
+                  "Type": "A",
+                  "TTL": 60,
+                  "ResourceRecords": [
+                    {
+                      "Value": "$PUBLIC_IP"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+          EOF
+          
+          echo "5. Route 53 레코드 업데이트 실행..."
+          aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch file://route53-update.json
+          echo "성공적으로 도메인의 IP를 $PUBLIC_IP 로 업데이트했습니다!"
