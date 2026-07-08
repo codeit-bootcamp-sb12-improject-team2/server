@@ -24,7 +24,7 @@ spring:
   # Dev MongoDB Settings
   data:
     mongodb:
-      uri: ${MONGO_URI}
+      uri: mongodb+srv://monew_user:flX6lsVvq0gxCHzN@monew-cluster.fky44fq.mongodb.net/?appName=monew-cluster
       database: monew
       uuid-representation: standard
 
