@@ -98,8 +98,8 @@ public class NotificationServiceImpl implements NotificationService {
   private NotificationDto convertToDto(Notification entity) {
     return NotificationDto.builder()
         .id(entity.getId())
-        .createdAt(entity.getCreatedAt() != null ? entity.getCreatedAt() : Instant.now())
-        .updatedAt(entity.getUpdatedAt() != null ? entity.getUpdatedAt() : Instant.now())
+        .createdAt(entity.getCreatedAt())
+        .updatedAt(entity.getUpdatedAt())
         .confirmed(entity.isConfirmed())
         .userId(entity.getUserId())
         .content(entity.getContent())
